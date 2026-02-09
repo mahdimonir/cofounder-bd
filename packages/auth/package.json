@@ -1,0 +1,10 @@
+{
+  "name": "@cofounder/auth",
+  "version": "1.0.0",
+  "main": "./index.ts",
+  "dependencies": {
+    "next-auth": "^4.24.11",
+    "@cofounder/utils": "workspace:*",
+    "@cofounder/types": "workspace:*"
+  }
+}

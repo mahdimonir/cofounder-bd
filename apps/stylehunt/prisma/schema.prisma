@@ -1,0 +1,228 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Brand {
+  id        String        @id
+  name      String
+  slug      String        @unique
+  domain    String?       @unique
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  products  Product[]
+  orders    Order[]
+  staff     BrandAccess[]
+}
+
+model BrandAccess {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  brandId   String
+  brand     Brand     @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  role      BrandRole @default(CUSTOMER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([userId, brandId])
+}
+
+enum BrandRole {
+  OWNER
+  MANAGER
+  SUPPORT
+  CUSTOMER
+}
+
+model Product {
+  id            String         @id
+  brandId       String?        @default("isratsshop")
+  brand         Brand?         @relation(fields: [brandId], references: [id])
+  name          String
+  description   String         @db.Text
+  price         Float
+  quantity      Int            @default(0)
+  imageUrl      String
+  category      String?
+  size          String[]
+  color         String[]
+  hasVariants   Boolean        @default(false)
+  isPack        Boolean        @default(false)
+  variants      Json?
+  createdAt     DateTime       @default(now())
+  cartItems     CartItem[]
+  orderItems    OrderItem[]
+  reviews       Review[]
+  wishlistItems WishlistItem[]
+  images        ProductImage[]
+
+  @@index([createdAt])
+  @@index([category])
+  @@index([price])
+}
+
+model ProductImage {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  color     String?
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+  @@index([color])
+}
+
+model User {
+  id          String         @id @default(cuid())
+  email       String?        @unique
+  password    String?
+  phoneNumber String?        @unique
+  name        String?
+  imageUrl    String?
+  addresses   Address[]
+  reviews     Review[]
+  wishlist    WishlistItem[]
+  isGuest     Boolean        @default(false)
+  role        Role           @default(CUSTOMER)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  cart        Cart?
+  orders      Order[]
+  brandAccess BrandAccess[]
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  STAFF
+  CUSTOMER
+}
+
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id            String   @id @default(cuid())
+  cartId        String
+  cart          Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id])
+  quantity      Int      @default(1)
+  selectedSize  String?
+  selectedColor String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([cartId, productId, selectedSize, selectedColor])
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  brandId         String?     @default("isratsshop")
+  brand           Brand?      @relation(fields: [brandId], references: [id])
+  userId          String?
+  user            User?       @relation(fields: [userId], references: [id])
+  items           OrderItem[]
+  total           Float
+  deliveryCharge  Float       @default(0)
+  status          OrderStatus @default(PENDING)
+  paymentMethod   String      @default("COD")
+  shippingAddress Json?
+  
+  // Landing Page / Guest Fields
+  customerName    String?
+  customerPhone   String?
+  customerAddress String?
+  customerArea    String?
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model OrderItem {
+  id            String   @id @default(cuid())
+  orderId       String
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id])
+  name          String?
+  quantity      Int
+  price         Float
+  selectedSize  String?
+  selectedColor String?
+  imageUrl      String?
+  createdAt     DateTime @default(now())
+}
+
+model Address {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label       String?
+  name        String
+  phoneNumber String
+  address     String
+  district    String
+  thana       String
+  isPrimary   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PasswordResetToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  rating    Int
+  comment   String?  @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+  @@index([userId])
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@index([productId])
+}

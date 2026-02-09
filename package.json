@@ -1,0 +1,23 @@
+{
+  "name": "cofounder-bd",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "db:generate": "turbo run db:generate",
+    "bengolsale:dev": "pnpm --filter @cofounder/bengolsale dev",
+    "stylehunt:dev": "pnpm --filter @cofounder/stylehunt dev",
+    "isratsshop:dev": "pnpm --filter @cofounder/isratsshop dev",
+    "fruits-zone:dev": "pnpm --filter @cofounder/fruits-zone dev",
+    "control:dev": "pnpm --filter @cofounder/control dev"
+  },
+  "packageManager": "pnpm@10.28.2",
+  "devDependencies": {
+    "turbo": "^2.8.3"
+  },
+  "dependencies": {
+    "sonner": "^2.0.7"
+  }
+}
