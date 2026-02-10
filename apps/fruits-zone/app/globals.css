@@ -1,0 +1,83 @@
+@import "tailwindcss";
+@source "../../../packages/ui/src/**/*.tsx";
+
+:root {
+  --background: #FDFCF9;
+  --foreground: #1A1C1B;
+}
+
+@theme inline {
+  --color-background: #FDFCF9;
+  --color-foreground: #2D3436;
+
+  --color-brand-primary: #004D41; 
+  --color-brand-secondary: #6B8E83;
+  --color-brand-dark: #2C3E36;
+  --color-brand-accent: #FF6D00;
+  --color-brand-muted: #F5F7F5;
+  --color-brand-slate: #5D6D7E;
+  --color-brand-text: #2D3436;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Outfit', sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  .animate-float-slow {
+    animation: float 10s ease-in-out infinite;
+  }
+  .animate-pulse-subtle {
+    animation: pulse-subtle 4s ease-in-out infinite;
+  }
+  
+  .glass-card {
+    @apply bg-white/60 backdrop-blur-xl border border-brand-primary/5 shadow-[0_4px_20px_0_rgba(74,99,91,0.05)];
+  }
+  
+  .glass-nav {
+    @apply bg-white/80 backdrop-blur-md border-b border-brand-primary/5;
+  }
+
+  .bg-mesh {
+    background-color: var(--color-background);
+  }
+
+  .pattern-islamic {
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0l2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6z' fill='%234A635B' fill-opacity='0.02' fill-rule='evenodd'/%3E%3C/svg%3E");
+  }
+
+  .text-gradient-emerald {
+    @apply text-brand-primary;
+  }
+
+  .text-gradient-gold {
+    @apply text-brand-accent;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-10px) rotate(2deg); }
+  66% { transform: translateY(5px) rotate(-1deg); }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
