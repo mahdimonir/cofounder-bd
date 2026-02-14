@@ -1,9 +1,10 @@
 'use client';
 
+import { trackEvent } from '@/lib/facebookPixel';
 import { calculateDeliveryCharge, calculateSavings, formatPrice } from '@cofounder/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, Package, Receipt, ShieldCheck, Star, Truck, X } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { products, type ProductFamily, type ProductVariant } from '../data/products';
 
@@ -32,6 +33,16 @@ export default function Checkout({ initialProducts }: CheckoutProps) {
   const [formData, setFormData] = useState({ name: '', phone: '', address: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOrderSuccess, setIsOrderSuccess] = useState(false);
+
+  useEffect(() => {
+    if (displayProducts.length > 0) {
+      trackEvent("ViewContent", {
+        content_ids: displayProducts.map(p => p.id),
+        content_type: 'product',
+        vendor: 'fruits-zone'
+      });
+    }
+  }, [displayProducts]);
   
   const formRef = useRef<HTMLDivElement>(null);
 
@@ -50,6 +61,12 @@ export default function Checkout({ initialProducts }: CheckoutProps) {
         const { [key]: _, ...rest } = prev;
         return rest;
       }
+      trackEvent("AddToCart", {
+        content_ids: [product.id],
+        content_name: product.name,
+        value: variant.price,
+        currency: "BDT"
+      });
       return {
         ...prev,
         [key]: { productId: product.id, variant, quantity: 1 }
@@ -97,6 +114,12 @@ export default function Checkout({ initialProducts }: CheckoutProps) {
       return;
     }
 
+    trackEvent("InitiateCheckout", {
+      value: total,
+      currency: "BDT",
+      content_ids: activeItems.map(item => item.productId)
+    });
+
     setIsSubmitting(true);
     try {
       const response = await fetch('/api/order', {
@@ -132,6 +155,13 @@ export default function Checkout({ initialProducts }: CheckoutProps) {
       setSelectedItems({});
       setFormData({ name: '', phone: '', address: '' });
       toast.success('অর্ডার পাঠানো হয়েছে!');
+
+      trackEvent("Purchase", {
+        value: total,
+        currency: "BDT",
+        content_ids: activeItems.map(item => item.productId),
+        vendor: 'fruits-zone'
+      });
     } catch (error: any) {
       toast.error(error.message || 'অর্ডার করতে সমস্যা হয়েছে।');
     } finally {

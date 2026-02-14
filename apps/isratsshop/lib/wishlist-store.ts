@@ -1,13 +1,13 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 interface WishlistStore {
-  wishlistIds: number[];
+  wishlistIds: string[];
   isLoading: boolean;
   isInitialized: boolean;
   fetchWishlist: () => Promise<void>;
-  toggleWishlist: (productId: number) => Promise<void>;
-  isInWishlist: (productId: number) => boolean;
-  setWishlistIds: (ids: number[]) => void;
+  toggleWishlist: (productId: string) => Promise<void>;
+  isInWishlist: (productId: string) => boolean;
+  setWishlistIds: (ids: string[]) => void;
   reset: () => void;
 }
 export const useWishlistStore = create<WishlistStore>()(

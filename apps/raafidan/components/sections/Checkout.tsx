@@ -1,9 +1,10 @@
 'use client';
 
+import { trackEvent } from '@/lib/facebookPixel';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, MapPin, Phone, Star, User, X } from 'lucide-react';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 interface CheckoutProps {
@@ -44,6 +45,16 @@ export function Checkout({ formRef, initialProducts }: CheckoutProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOrderSuccess, setIsOrderSuccess] = useState(false);
 
+  useEffect(() => {
+    if (products.length > 0) {
+      trackEvent("ViewContent", {
+        content_ids: products.map(p => p.id),
+        content_type: 'product',
+        vendor: 'raafidan'
+      });
+    }
+  }, [products]);
+
   const selectedIds = Object.keys(selectedPackages);
   const activeCount = selectedIds.length;
   
@@ -74,6 +85,12 @@ export function Checkout({ formRef, initialProducts }: CheckoutProps) {
       if (newSelected[id]) {
         delete newSelected[id];
       } else {
+        trackEvent("AddToCart", {
+          content_ids: [id],
+          content_name: products.find(p => p.id === id)?.name,
+          value: products.find(p => p.id === id)?.price,
+          currency: "BDT"
+        });
         newSelected[id] = 1;
       }
       return newSelected;
@@ -89,6 +106,12 @@ export function Checkout({ formRef, initialProducts }: CheckoutProps) {
       toast.error('অন্তত ১টি প্যাকেজ সিলেক্ট করুন');
       return;
     }
+
+    trackEvent("InitiateCheckout", {
+      value: total,
+      currency: "BDT",
+      content_ids: products.filter(p => selectedIds.includes(p.id)).map(p => p.id)
+    });
 
     setIsSubmitting(true);
     try {
@@ -123,6 +146,14 @@ export function Checkout({ formRef, initialProducts }: CheckoutProps) {
       }
       
       toast.success('অর্ডার পাঠানো হয়েছে!');
+      
+      trackEvent("Purchase", {
+        value: total,
+        currency: "BDT",
+        content_ids: products.filter(p => selectedIds.includes(p.id)).map(p => p.id),
+        vendor: 'raafidan'
+      });
+
       setIsOrderSuccess(true);
       setSelectedPackages({});
       setFormData({ name: '', phone: '', address: '' });

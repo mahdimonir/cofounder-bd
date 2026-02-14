@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 interface WishlistButtonProps {
-  productId: number;
+  productId: string;
   initialState?: boolean;
   className?: string;
   iconSize?: number;

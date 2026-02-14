@@ -1,9 +1,10 @@
 'use client';
 
+import { trackEvent } from '@/lib/facebookPixel';
 import { calculateDeliveryCharge, formatPrice } from '@cofounder/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, Package, ShoppingCart, X } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { SIZES } from '../constants';
 import { ProductSize } from '../types';
@@ -21,6 +22,16 @@ const Checkout: React.FC<CheckoutProps> = ({ formRef, initialProducts }) => {
   const [formData, setFormData] = useState({ name: '', phone: '', address: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOrderSuccess, setIsOrderSuccess] = useState(false);
+
+  useEffect(() => {
+    if (initialProducts.length > 0) {
+      trackEvent("ViewContent", {
+        content_ids: initialProducts.map(p => p.id),
+        content_type: 'product',
+        vendor: 'bengolsale'
+      });
+    }
+  }, [initialProducts]);
 
   const selectedIds = Object.keys(selectedItems);
   const activeProducts = products.filter(p => selectedIds.includes(p.id));
@@ -68,6 +79,12 @@ const Checkout: React.FC<CheckoutProps> = ({ formRef, initialProducts }) => {
       if (selectedItems[product.id]) {
           handleRemove(product.id);
       } else {
+          trackEvent("AddToCart", {
+            content_ids: [product.id],
+            content_name: product.name,
+            value: product.price,
+            currency: "BDT"
+          });
           handleSelect(product.id, 'M');
       }
   }
@@ -85,6 +102,12 @@ const Checkout: React.FC<CheckoutProps> = ({ formRef, initialProducts }) => {
       toast.error('Please select at least one item');
       return;
     }
+
+    trackEvent("InitiateCheckout", {
+      value: total,
+      currency: "BDT",
+      content_ids: activeProducts.map(p => p.id)
+    });
 
     setIsSubmitting(true);
     try {
@@ -120,6 +143,14 @@ const Checkout: React.FC<CheckoutProps> = ({ formRef, initialProducts }) => {
       }
       
       toast.success('অর্ডার পাঠানো হয়েছে!');
+      
+      trackEvent("Purchase", {
+        value: total,
+        currency: "BDT",
+        content_ids: activeProducts.map(item => item.id),
+        vendor: 'bengolsale'
+      });
+
       setIsOrderSuccess(true);
       setSelectedItems({});
       setFormData({ name: '', phone: '', address: '' });

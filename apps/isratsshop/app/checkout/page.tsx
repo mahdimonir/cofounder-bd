@@ -1,5 +1,6 @@
 "use client";
 import { useCartStore } from "@/lib/cart-store";
+import { trackEvent } from "@/lib/facebookPixel";
 import { calculateDeliveryCharge, formatPrice } from "@cofounder/utils";
 import {
     Loader2,
@@ -116,6 +117,16 @@ export default function CheckoutPage() {
     }
     fetchThanas();
   }, [formData.district, districts]);
+  useEffect(() => {
+    if (items.length > 0) {
+      trackEvent("InitiateCheckout", {
+        value: total,
+        currency: "BDT",
+        content_ids: items.map(item => item.id),
+        num_items: items.reduce((acc, item) => acc + item.quantity, 0)
+      });
+    }
+  }, []);
   useEffect(() => {
     if (session?.user) {
       setFormData((prev) => ({

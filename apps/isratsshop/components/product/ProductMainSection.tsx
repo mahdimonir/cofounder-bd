@@ -1,9 +1,10 @@
 "use client";
 import { useCartStore } from "@/lib/cart-store";
+import { trackEvent } from "@/lib/facebookPixel";
 import { ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import WishlistButton from "../wishlist/WishlistButton";
 interface ProductImage {
@@ -32,6 +33,18 @@ export default function ProductMainSection({ product }: { product: Product }) {
   const [selectedColor, setSelectedColor] = useState<string | undefined>(
     product.color.length > 0 ? product.color[0] : undefined,
   );
+
+  useEffect(() => {
+    trackEvent("ViewContent", {
+      content_ids: [product.id],
+      content_name: product.name,
+      content_category: product.category,
+      value: product.price,
+      currency: "BDT",
+      vendor: "isratsshop"
+    });
+  }, [product]);
+
   const router = useRouter();
   const addItem = useCartStore((state) => state.addItem);
   const currentImage = selectedColor
@@ -55,6 +68,14 @@ export default function ProductMainSection({ product }: { product: Product }) {
       selectedSize,
       selectedColor,
     });
+
+    trackEvent("AddToCart", {
+      content_ids: [product.id],
+      content_name: product.name,
+      value: product.price,
+      currency: "BDT"
+    });
+
     toast.success(`${product.name} added to cart!`);
     setTimeout(() => {
       router.push("/cart");

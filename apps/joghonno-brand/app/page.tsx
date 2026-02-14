@@ -2,28 +2,29 @@
 
 import Navbar from '@/components/Navbar';
 import {
-  FAQS,
-  getWhatsAppUrl,
-  PRICING_PLANS,
-  TRANSLATIONS,
-  WHATSAPP_URL
+    FAQS,
+    getWhatsAppUrl,
+    PRICING_PLANS,
+    TRANSLATIONS,
+    WHATSAPP_URL
 } from '@/lib/constants';
+import { trackEvent } from '@/lib/facebookPixel';
 import {
-  AlertCircle,
-  ArrowRight,
-  Check,
-  Facebook,
-  Globe,
-  Instagram,
-  Linkedin,
-  Mail,
-  MessageCircle,
-  Minus,
-  Plus,
-  ShieldCheck,
-  Smartphone,
-  Video,
-  Zap
+    AlertCircle,
+    ArrowRight,
+    Check,
+    Facebook,
+    Globe,
+    Instagram,
+    Linkedin,
+    Mail,
+    MessageCircle,
+    Minus,
+    Plus,
+    ShieldCheck,
+    Smartphone,
+    Video,
+    Zap
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -31,6 +32,14 @@ export default function Home() {
   const [lang, setLang] = useState<'bn' | 'en'>('bn');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const t = TRANSLATIONS[lang];
+
+  const handleCTAClick = (source: string) => {
+    trackEvent("Lead", {
+      content_name: source,
+      content_category: "Agency Inquiry",
+      vendor: "joghonno"
+    });
+  };
 
   return (
     <div className={`min-h-screen bg-white selection:bg-indigo-100 selection:text-indigo-900 ${lang === 'bn' ? 'bangla-font' : ''}`}>
@@ -61,7 +70,13 @@ export default function Home() {
           </p>
           
           <div className="reveal flex flex-col sm:flex-row items-center justify-center gap-6 px-4 mb-24">
-            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="btn-primary w-full sm:w-auto px-12 py-6 rounded-2xl font-black text-xl flex items-center justify-center gap-4 shadow-2xl shadow-indigo-600/20">
+            <a 
+              href={WHATSAPP_URL} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              onClick={() => handleCTAClick("Hero CTA")}
+              className="btn-primary w-full sm:w-auto px-12 py-6 rounded-2xl font-black text-xl flex items-center justify-center gap-4 shadow-2xl shadow-indigo-600/20"
+            >
               <MessageCircle size={28} /> {t.hero.cta}
             </a>
             {/* <button className="w-full sm:w-auto bg-white text-[#0F172A] border border-slate-200 px-12 py-6 rounded-2xl font-black text-xl hover:bg-slate-50 transition-all shadow-sm">
@@ -235,7 +250,15 @@ export default function Home() {
                     </div>
                   ))}
                 </div>
-                <a href={getWhatsAppUrl(plan.name, plan.price, lang)} target="_blank" rel="noopener noreferrer" className={`w-full py-6 rounded-2xl font-black text-center text-base uppercase tracking-[0.2em] block transition-all shadow-xl ${plan.isPopular ? 'bg-indigo-600 text-white hover:bg-white hover:text-[#0F172A]' : 'bg-slate-100 text-[#0F172A] hover:bg-indigo-600 hover:text-white'}`}>{t.pricing.cta}</a>
+                <a 
+                  href={getWhatsAppUrl(plan.name, plan.price, lang)} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  onClick={() => handleCTAClick(`Pricing Plan: ${plan.name}`)}
+                  className={`w-full py-6 rounded-2xl font-black text-center text-base uppercase tracking-[0.2em] block transition-all shadow-xl ${plan.isPopular ? 'bg-indigo-600 text-white hover:bg-white hover:text-[#0F172A]' : 'bg-slate-100 text-[#0F172A] hover:bg-indigo-600 hover:text-white'}`}
+                >
+                  {t.pricing.cta}
+                </a>
               </div>
             ))}
           </div>
@@ -310,7 +333,15 @@ export default function Home() {
                     <h4 className="text-2xl md:text-3xl font-black tracking-tight leading-tight">Let's build something <span className="text-indigo-500">legendary</span>.</h4>
                     <p className="text-slate-400 text-lg md:text-xl font-medium leading-relaxed">{t.footer.ctaDesc}</p>
                   </div>
-                  <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="group w-full flex items-center justify-center gap-6 bg-indigo-600 hover:bg-[#A3E635] hover:text-[#020617] px-12 py-8 rounded-[2.5rem] text-white font-black tracking-tight text-2xl transition-all duration-500 shadow-xl shadow-indigo-600/20">{t.footer.ctaBtn} <ArrowRight size={32} className="group-hover:translate-x-3 transition-transform" /></a>
+                  <a 
+                    href={WHATSAPP_URL} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    onClick={() => handleCTAClick("Footer CTA")}
+                    className="group w-full flex items-center justify-center gap-6 bg-indigo-600 hover:bg-[#A3E635] hover:text-[#020617] px-12 py-8 rounded-[2.5rem] text-white font-black tracking-tight text-2xl transition-all duration-500 shadow-xl shadow-indigo-600/20"
+                  >
+                    {t.footer.ctaBtn} <ArrowRight size={32} className="group-hover:translate-x-3 transition-transform" />
+                  </a>
                 </div>
                 <div className="absolute -bottom-20 -right-20 opacity-[0.05] pointer-events-none rotate-12 text-indigo-500"><Zap size={380} /></div>
               </div>
