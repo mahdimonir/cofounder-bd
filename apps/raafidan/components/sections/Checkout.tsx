@@ -2,7 +2,7 @@
 
 import { trackEvent } from '@/lib/facebookPixel';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Check, MapPin, Phone, Star, User, X } from 'lucide-react';
+import { Check, MapPin, Minus, Phone, Plus, Star, User, X } from 'lucide-react';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -13,11 +13,10 @@ interface CheckoutProps {
 }
 
 export function Checkout({ formRef, initialProducts }: CheckoutProps) {
-  // Use initialProducts as the single source of truth for package data
   const [products] = useState<any[]>(initialProducts.length > 0 ? initialProducts : [
     {
       id: 'raafidan-package-1',
-      name: 'প্যাকেজ ১ (Best Seller)',
+      name: 'Oudh Signature',
       price: 390,
       imageUrl: '/package-1.png',
       description: 'এহসাস আল আরাবিয়া, আমির আল উদ, কুল ওয়াটার ব্লু, হোয়াইট উদ, ডানহিল ডিজায়ার',
@@ -25,14 +24,14 @@ export function Checkout({ formRef, initialProducts }: CheckoutProps) {
     },
     {
       id: 'raafidan-package-2',
-      name: 'প্যাকেজ ২ (Signature)',
+      name: 'Modern Fresh',
       price: 390,
       imageUrl: '/package-2.png',
       description: 'ভ্যাম্পায়ার ব্লাড, সুলতান, ফ্যান্টাসি, জোপি, সিলভার স্টোন'
     },
     {
       id: 'raafidan-package-3',
-      name: 'প্যাকেজ ৩ (Traditional)',
+      name: 'Traditional Oriental',
       price: 390,
       imageUrl: '/package-3.png',
       description: 'জান্নাতুল ফেরদাউস, রয়েল বাখুর, প্যারিস হিলটন, সিকে ওয়ান, বাকারাত রোজ'
@@ -56,24 +55,27 @@ export function Checkout({ formRef, initialProducts }: CheckoutProps) {
   }, [products]);
 
   const selectedIds = Object.keys(selectedPackages);
+  const totalQuantity = Object.values(selectedPackages).reduce((acc, qty) => acc + qty, 0);
   const activeCount = selectedIds.length;
   
   // Custom Pricing Logic: Raafidan specific combo deals
   let subtotal = 0;
-  if (activeCount === 1) subtotal = 390;
-  else if (activeCount === 2) subtotal = 690;
-  else if (activeCount === 3) subtotal = 890;
+  if (totalQuantity === 1) subtotal = 390;
+  else if (totalQuantity === 2) subtotal = 690;
+  else if (totalQuantity === 3) subtotal = 890;
   else {
-    // Fallback for more than 3 packages or customized counts
-    // For Raafidan, they usually only have 3 packages, but let's be safe
-    subtotal = selectedIds.reduce((acc, id) => {
-      const p = products.find(prod => prod.id === id);
-      return acc + (p?.price || 390);
-    }, 0);
-    
-    // Apply bulk discount if applicable (matching the logic above)
-    if (activeCount === 2) subtotal = 690;
-    if (activeCount === 3) subtotal = 890;
+    // For 4 or more, apply the best combo + regular price for extras
+    // or just calculate based on package prices.
+    // Raafidan's current logic seems to favor specific counts.
+    // Let's stick to the pattern: 3 combo (890) + (additional * 390)
+    if (totalQuantity > 3) {
+      subtotal = 890 + (totalQuantity - 3) * 390;
+    } else {
+      subtotal = selectedIds.reduce((acc, id) => {
+        const p = products.find(prod => prod.id === id);
+        return acc + ((p?.price || 390) * selectedPackages[id]);
+      }, 0);
+    }
   }
   
   const deliveryCharge = 0; // Free delivery as requested
@@ -92,6 +94,21 @@ export function Checkout({ formRef, initialProducts }: CheckoutProps) {
           currency: "BDT"
         });
         newSelected[id] = 1;
+      }
+      return newSelected;
+    });
+  };
+
+  const updateQuantity = (id: string, delta: number) => {
+    setSelectedPackages(prev => {
+      const newSelected = { ...prev };
+      const currentQty = newSelected[id] || 0;
+      const newQty = currentQty + delta;
+      
+      if (newQty <= 0) {
+        delete newSelected[id];
+      } else {
+        newSelected[id] = newQty;
       }
       return newSelected;
     });
@@ -131,7 +148,7 @@ export function Checkout({ formRef, initialProducts }: CheckoutProps) {
             productId: p.id,
             name: p.name,
             price: p.price,
-            quantity: 1,
+            quantity: selectedPackages[p.id],
             imageUrl: p.imageUrl
           })),
           total,
@@ -184,17 +201,52 @@ export function Checkout({ formRef, initialProducts }: CheckoutProps) {
              নিচ থেকে আপনার পছন্দের প্যাকেজটি সিলেক্ট করে অর্ডার করুন।
           </p>
           
-          <div className="flex flex-wrap justify-center gap-4 mt-12 scale-110">
-            <div className="bg-white text-brand-black px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-gray-100 shadow-sm">
-              1 Pkg - 390 Tk
-            </div>
-            <div className="bg-white text-brand-black px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-gray-100 shadow-sm">
-              2 Pkg - 690 Tk
-            </div>
-            <div className="bg-brand-black text-white px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-brand-black/20 relative group overflow-hidden">
-              <div className="absolute inset-0 bg-brand-gold translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-              <span className="relative z-10 group-hover:text-brand-black transition-colors">3 Pkg Combo - 890 Tk (Best Value)</span>
-            </div>
+          <div className="flex flex-col md:flex-row items-stretch justify-center gap-6 mt-16 max-w-4xl mx-auto px-4">
+            {/* Tier 1: Essential */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              viewport={{ once: true }}
+              className="flex-1 bg-white border border-gray-100 p-6 rounded-[2rem] shadow-sm hover:shadow-xl transition-all text-center group"
+            >
+              <span className="text-[10px] font-black tracking-[0.2em] text-gray-400 uppercase">Single Pack</span>
+              <h4 className="text-3xl font-body font-black text-brand-black mt-2">390 Tk</h4>
+              <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-[0.1em]">1 Package</p>
+            </motion.div>
+
+            {/* Tier 2: Premium Duo */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              viewport={{ once: true }}
+              className="flex-1 bg-white border-2 border-brand-gold/20 p-6 rounded-[2rem] shadow-md hover:shadow-xl transition-all text-center relative group"
+            >
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-gold text-brand-black text-[9px] font-black px-4 py-1.5 rounded-full uppercase tracking-tighter shadow-lg z-10">
+                Save 90 Tk
+              </div>
+              <span className="text-[10px] font-black tracking-[0.2em] text-gray-400 uppercase">Premium Duo</span>
+              <h4 className="text-3xl font-body font-black text-brand-black mt-2">690 Tk</h4>
+              <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-[0.1em]">2 Packages</p>
+            </motion.div>
+
+            {/* Tier 3: Ultimate Bundle (The Star) */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              viewport={{ once: true }}
+              className="flex-1 bg-brand-black text-white p-6 rounded-[2rem] shadow-2xl shadow-brand-gold/20 text-center relative border border-brand-gold/30 group cursor-default"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-brand-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity overflow-hidden rounded-[2rem]" />
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-gold text-brand-black text-[9px] font-black px-6 py-1.5 rounded-full uppercase tracking-[0.2em] shadow-lg z-20 animate-pulse">
+                Best Value • Save 280 Tk
+              </div>
+              <span className="text-[10px] font-black tracking-[0.2em] text-brand-gold uppercase">Ultimate Combo</span>
+              <h4 className="text-3xl font-body font-black text-white mt-2 tracking-tight">890 Tk</h4>
+              <p className="text-[10px] text-brand-lightgray/60 mt-1 font-bangla uppercase tracking-wider">৩টি প্যাকেজের সেরা কালেকশন</p>
+            </motion.div>
           </div>
         </div>
 
@@ -225,7 +277,7 @@ export function Checkout({ formRef, initialProducts }: CheckoutProps) {
                     alt={pkg.name} 
                     fill 
                     className={cn(
-                      "object-contain p-8 transition-transform duration-1000 ease-out",
+                      "object-cover transition-transform duration-1000 ease-out",
                       selectedPackages[pkg.id] ? "scale-105" : "group-hover:scale-110"
                     )}
                   />
@@ -270,7 +322,17 @@ export function Checkout({ formRef, initialProducts }: CheckoutProps) {
                         </div>
                       </>
                     ) : pkg.description ? (
-                      <p className="text-xs text-gray-600 font-bangla leading-relaxed">{pkg.description}</p>
+                      <div className="space-y-2">
+                        <p className="text-xs font-black uppercase tracking-widest text-gray-400">এই প্যাকেজে থাকবে:</p>
+                        <div className="grid grid-cols-1 gap-2">
+                          {pkg.description.split(',').map((item: string, i: number) => (
+                            <div key={i} className="flex items-center gap-2 text-sm text-gray-600 font-bangla">
+                              <div className="w-1.5 h-1.5 rounded-full bg-brand-gold" />
+                              {item.trim()}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     ) : null}
                   </div>
                 </div>
@@ -383,26 +445,47 @@ export function Checkout({ formRef, initialProducts }: CheckoutProps) {
                                 <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-gold">Order Summary</h3>
                                 <div className="flex items-center gap-2">
                                      <div className="w-2 h-2 rounded-full bg-brand-gold animate-pulse" />
-                                     <span className="text-[9px] font-black text-brand-gold uppercase tracking-widest">{activeCount} Selected</span>
+                                     <span className="text-[9px] font-black text-brand-gold uppercase tracking-widest">{totalQuantity} Items</span>
                                 </div>
                             </div>
 
                             <div className="space-y-3 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
-                                {activeCount > 0 ? (
+                                {totalQuantity > 0 ? (
                                     products.filter(p => selectedIds.includes(p.id)).map(p => (
-                                        <div key={p.id} className="flex items-center justify-between group/item">
+                                        <div key={p.id} className="flex items-center justify-between group/item py-2 border-b border-white/[0.03] last:border-0">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center overflow-hidden border border-white/5 relative">
-                                                    <Image src={p.imageUrl} alt={p.name} fill className="object-contain p-1" />
+                                                <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center overflow-hidden border border-white/5 relative">
+                                                    <Image src={p.imageUrl} alt={p.name} fill className="w-full h-full object-cover" />
                                                 </div>
-                                                <span className="text-xs font-bangla font-medium text-brand-lightgray truncate max-w-[120px]">{p.name}</span>
+                                                <div className="flex flex-col">
+                                                    <span className="text-[10px] font-bangla font-medium text-brand-lightgray truncate max-w-[100px]">{p.name}</span>
+                                                    <span className="text-[9px] text-brand-gold font-body">{p.price} Tk</span>
+                                                </div>
                                             </div>
-                                            <button 
-                                                onClick={() => togglePackage(p.id)}
-                                                className="opacity-0 group-hover/item:opacity-100 text-brand-gold hover:text-white transition-all"
-                                            >
-                                                <X className="w-3 h-3" />
-                                            </button>
+                                            
+                                            <div className="flex items-center gap-2">
+                                                <div className="flex items-center bg-white/5 rounded-lg border border-white/10">
+                                                    <button 
+                                                        onClick={() => updateQuantity(p.id, -1)}
+                                                        className="w-6 h-6 flex items-center justify-center text-brand-lightgray hover:text-white hover:bg-white/5 transition-colors"
+                                                    >
+                                                        <Minus size={10} />
+                                                    </button>
+                                                    <span className="w-6 text-center text-[10px] font-bold font-body">{selectedPackages[p.id]}</span>
+                                                    <button 
+                                                        onClick={() => updateQuantity(p.id, 1)}
+                                                        className="w-6 h-6 flex items-center justify-center text-brand-lightgray hover:text-white hover:bg-white/5 transition-colors"
+                                                    >
+                                                        <Plus size={10} />
+                                                    </button>
+                                                </div>
+                                                <button 
+                                                    onClick={() => togglePackage(p.id)}
+                                                    className="p-1 text-gray-500 hover:text-red-400 transition-colors"
+                                                >
+                                                    <X className="w-3 h-3" />
+                                                </button>
+                                            </div>
                                         </div>
                                     ))
                                 ) : (

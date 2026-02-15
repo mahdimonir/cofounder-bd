@@ -367,7 +367,7 @@ export default function Checkout({ initialProducts }: CheckoutProps) {
 
                            <div className="flex gap-2 sm:gap-4 p-1.5 sm:p-2 bg-brand-muted/20 rounded-2xl sm:rounded-3xl border border-brand-muted/50">
                               <button type="button" onClick={() => setDeliveryArea('inside')} className={`flex-1 py-3 sm:py-4 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-wider sm:tracking-widest transition-all ${deliveryArea === 'inside' ? 'bg-white text-brand-primary shadow-xl ring-2 ring-brand-primary/10' : 'text-brand-text/30 hover:bg-white/50'}`}>চট্টগ্রাম ({formatPrice(80)})</button>
-                              <button type="button" onClick={() => setDeliveryArea('outside')} className={`flex-1 py-3 sm:py-4 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-wider sm:tracking-widest transition-all ${deliveryArea === 'outside' ? 'bg-white text-brand-primary shadow-xl ring-2 ring-brand-primary/10' : 'text-brand-text/30 hover:bg-white/50'}`}>বাহিরে ({formatPrice(130)})</button>
+                              <button type="button" onClick={() => setDeliveryArea('outside')} className={`flex-1 py-3 sm:py-4 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-wider sm:tracking-widest transition-all ${deliveryArea === 'outside' ? 'bg-white text-brand-primary shadow-xl ring-2 ring-brand-primary/10' : 'text-brand-text/30 hover:bg-white/50'}`}>বাহিরে ({formatPrice(120)})</button>
                            </div>
                        </div>
                        

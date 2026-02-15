@@ -2,7 +2,7 @@ import { Plus } from "lucide-react";
 
 export function FAQSection() {
     const faqs = [
-        { q: "Delivery time?", a: "Inside Dhaka: 24-48 Hours. Outside Dhaka: 3-5 Days." },
+        { q: "Delivery time?", a: "Inside Chattogram: 24-48 Hours. Outside Chattogram: 3-5 Days." },
         { q: "Cash on Delivery available?", a: "Yes, we offer Cash on Delivery nationwide." },
         { q: "Are they 100% Alcohol Free?", a: "Absolutely. All our products are Halal and Alcohol-free." },
         { q: "What is the Exchange Policy?", a: "7-day easy return if the bottle is unopened/damaged." }

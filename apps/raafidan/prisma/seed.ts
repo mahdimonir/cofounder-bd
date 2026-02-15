@@ -19,11 +19,11 @@ async function main() {
         {
             id: 'raafidan-package-1',
             brandId: 'raafidan',
-            name: 'প্যাকেজ ১ (Best Seller)',
+            name: 'Oudh Signature',
             description: 'এহসাস আল আরাবিয়া, আমির আল উদ, কুল ওয়াটার ব্লু, হোয়াইট উদ, ডানহিল ডিজায়ার',
             price: 390,
             quantity: 100,
-            imageUrl: '/package-1.png', // TODO: Replace with Cloudinary URL
+            imageUrl: '/package-1.png',
             category: 'Package',
             size: [],
             color: [],
@@ -31,11 +31,11 @@ async function main() {
         {
             id: 'raafidan-package-2',
             brandId: 'raafidan',
-            name: 'প্যাকেজ ২',
-            description: 'গ্রিন আইরিশ,  আব্বাস, আল রহমত, নাগা, আর্মানি কোড',
+            name: 'Modern Fresh',
+            description: 'ভ্যাম্পায়ার ব্লাড, সুলতান, ফ্যান্টাসি, জোপি, সিলভার স্টোন',
             price: 390,
             quantity: 100,
-            imageUrl: '/package-2.png', // TODO: Replace with Cloudinary URL
+            imageUrl: '/package-2.png',
             category: 'Package',
             size: [],
             color: [],
@@ -43,11 +43,11 @@ async function main() {
         {
             id: 'raafidan-package-3',
             brandId: 'raafidan',
-            name: 'প্যাকেজ ৩',
-            description: 'রাশা, আফনান টার্বী, ব্লু সিডাক্শন, লাল কাবাহ, ফোর হিম আজারো',
+            name: 'Traditional Oriental',
+            description: 'জান্নাতুল ফেরদাউস, রয়েল বাখুর, প্যারিস হিলটন, সিকে ওয়ান, বাকারাত রোজ',
             price: 390,
             quantity: 100,
-            imageUrl: '/package-3.png', // TODO: Replace with Cloudinary URL
+            imageUrl: '/package-3.png',
             category: 'Package',
             size: [],
             color: [],

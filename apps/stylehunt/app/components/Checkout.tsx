@@ -373,11 +373,11 @@ const Checkout: React.FC<CheckoutProps> = ({ formRef, initialProducts }) => {
                             <h3 className="text-2xl font-black text-brand-dark mb-2">{activeVariant.name}</h3>
                              <div className="flex items-center gap-3 mb-4">
                                 <span className="text-3xl font-bold text-brand-primary">{formatPrice(activeVariant.price)}</span>
-                                {activeVariant.originalPrice && (
-                                    <span className="text-lg text-gray-400 line-through">{formatPrice(activeVariant.originalPrice)}</span>
+                                { (activeVariant.originalPrice || 1200) && (
+                                    <span className="text-lg text-gray-400 line-through">{formatPrice(activeVariant.originalPrice || 1200)}</span>
                                 )}
                                 <div className="bg-green-100 text-green-600 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
-                                    Save {formatPrice((activeVariant.originalPrice || activeVariant.price * 1.2) - activeVariant.price)}
+                                    Save {formatPrice((activeVariant.originalPrice || 1200) - activeVariant.price)}
                                 </div>
                              </div>
                             <p className="text-sm text-gray-500 leading-relaxed mb-6">
@@ -460,7 +460,7 @@ const Checkout: React.FC<CheckoutProps> = ({ formRef, initialProducts }) => {
 
                          <div className="grid grid-cols-2 gap-3 mt-6">
                            <button type="button" onClick={() => setDeliveryArea('inside')} className={`py-3 rounded-2xl text-[10px] font-black uppercase transition-all ${deliveryArea === 'inside' ? 'bg-brand-dark text-white' : 'bg-brand-muted text-gray-400'}`}>Inside Chattogram ({formatPrice(80)})</button>
-                           <button type="button" onClick={() => setDeliveryArea('outside')} className={`py-3 rounded-2xl text-[10px] font-black uppercase transition-all ${deliveryArea === 'outside' ? 'bg-brand-dark text-white' : 'bg-brand-muted text-gray-400'}`}>Outside ({formatPrice(130)})</button>
+                           <button type="button" onClick={() => setDeliveryArea('outside')} className={`py-3 rounded-2xl text-[10px] font-black uppercase transition-all ${deliveryArea === 'outside' ? 'bg-brand-dark text-white' : 'bg-brand-muted text-gray-400'}`}>Outside ({formatPrice(120)})</button>
                          </div>
 
                         <div className="bg-brand-dark rounded-[2.5rem] p-3 sm:p-5 md:p-8 mt-10 text-white shadow-2xl relative overflow-hidden group/card border border-white/5">
@@ -509,7 +509,7 @@ const Checkout: React.FC<CheckoutProps> = ({ formRef, initialProducts }) => {
 
                             <div className="space-y-1 py-4 border-t border-white/5">
                                 {(() => {
-                                  const regularTotal = activeProducts.reduce((acc, item) => acc + ((item.originalPrice || item.price) * selectedItems[item.id].quantity), 0);
+                                  const regularTotal = activeProducts.reduce((acc, item) => acc + ((item.originalPrice || 1200) * selectedItems[item.id].quantity), 0);
                                   return (
                                     <>
                                        <div className="flex justify-between text-[11px] text-gray-400">

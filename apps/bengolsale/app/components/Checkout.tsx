@@ -348,7 +348,7 @@ const Checkout: React.FC<CheckoutProps> = ({ formRef, initialProducts }) => {
 
                         <div className="grid grid-cols-2 gap-3 mt-6">
                           <button type="button" onClick={() => setDeliveryArea('inside')} className={`py-3 rounded-2xl text-[10px] font-black uppercase transition-all ${deliveryArea === 'inside' ? 'bg-brand-dark text-white' : 'bg-brand-muted text-gray-400'}`}>চট্টগ্রাম ({formatPrice(80)})</button>
-                          <button type="button" onClick={() => setDeliveryArea('outside')} className={`py-3 rounded-2xl text-[10px] font-black uppercase transition-all ${deliveryArea === 'outside' ? 'bg-brand-dark text-white' : 'bg-brand-muted text-gray-400'}`}>বাহিরে ({formatPrice(130)})</button>
+                          <button type="button" onClick={() => setDeliveryArea('outside')} className={`py-3 rounded-2xl text-[10px] font-black uppercase transition-all ${deliveryArea === 'outside' ? 'bg-brand-dark text-white' : 'bg-brand-muted text-gray-400'}`}>বাহিরে ({formatPrice(120)})</button>
                         </div>
 
                         {/* Bill Summary */}
