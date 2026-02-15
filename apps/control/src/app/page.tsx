@@ -8,7 +8,6 @@ import {
     Activity,
     ArrowUpRight,
     ChevronRight,
-    ExternalLink,
     Package,
     ShoppingBag,
     Target,
@@ -23,13 +22,12 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!activeBrand) return;
-        
         const fetchStats = async () => {
             setLoading(true);
             setStats(null);
             try {
-                const res = await fetch(`/api/stats?brandId=${activeBrand.id}`);
+                const url = activeBrand?.id ? `/api/stats?brandId=${activeBrand.id}` : '/api/stats';
+                const res = await fetch(url);
                 const data = await res.json();
                 setStats(data);
             } catch (error) {
@@ -44,35 +42,20 @@ export default function Dashboard() {
 
     return (
         <div className="max-w-7xl relative pb-20">
-            {/* Background Decorative Elements */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px] -z-10 pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
-
-            <header className="mb-12">
-                <div className="flex items-center gap-2 text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-4">
-                    <Activity size={12} className={cn(loading && "animate-pulse")} />
-                    Neural Sync: {loading ? 'Fetching...' : 'Active'}
-                </div>
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
-                    <div>
-                        <h1 className="text-5xl font-black text-slate-900 leading-none tracking-tight">
-                            {activeBrand?.name} <span className="text-slate-400 font-light underline decoration-blue-500/20 underline-offset-8">Dashboard</span>
-                        </h1>
-                        <p className="text-slate-500 mt-5 font-medium text-lg max-w-xl">
-                            Unified management for your brand ecosystems. Real-time insights, delivered with precision.
-                        </p>
+            <div className="flex items-center gap-6 mb-10">
+                <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-xl bg-slate-900 flex items-center justify-center text-white">
+                        <Activity size={14} className={cn(loading && "animate-pulse")} />
                     </div>
-                    <div className="flex items-center gap-4">
-                        <button className="h-14 px-8 bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl text-xs font-black text-slate-900 hover:bg-white/60 transition-all flex items-center gap-2 shadow-sm">
-                            <ExternalLink size={16} />
-                            Launch Site
-                        </button>
-                        <button className="h-14 px-8 bg-slate-900 border-b-4 border-slate-950 rounded-3xl text-xs font-black text-white hover:translate-y-0.5 active:translate-y-1 active:border-b-0 transition-all shadow-xl shadow-slate-900/20">
-                            Command Center
-                        </button>
-                    </div>
+                    <h2 className="text-sm font-black text-slate-900 uppercase tracking-tight">
+                        {activeBrand?.id ? activeBrand.name : 'Global Ecosystem'} <span className="text-slate-400 font-light">Overview</span>
+                    </h2>
                 </div>
-            </header>
+                <div className="w-px h-6 bg-slate-200" />
+                <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em]">
+                    Real-time Synchronization
+                </div>
+            </div>
 
             <AnimatePresence mode="wait">
                 {loading && !stats ? (

@@ -53,12 +53,12 @@ export function BrandProvider({ children }: { children: React.ReactNode }) {
         if (loading) return;
 
         const saved = localStorage.getItem('cofounder_brand_context');
-        if (saved) {
+        if (saved && saved !== '') {
             const brand = brands.find(b => b.id === saved);
             if (brand) setActiveBrandState(brand);
-            else setActiveBrandState(brands[0]);
+            else setActiveBrandState(null);
         } else {
-            setActiveBrandState(brands[0]);
+            setActiveBrandState(null);
         }
     }, [loading, brands]);
 

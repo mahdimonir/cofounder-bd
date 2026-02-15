@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/lib/utils';
 import { useBrand } from '@/providers/BrandProvider';
 import { formatPrice } from '@cofounder/utils';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -108,49 +109,50 @@ export default function InventoryPage() {
 
     return (
         <div className="max-w-7xl relative">
-            <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div>
-                    <div className="flex items-center gap-2 text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mb-3">
-                        <Database size={12} />
-                        Global Inventory Control
-                    </div>
-                    <h1 className="text-4xl font-black text-slate-900 leading-none tracking-tight">
-                        Product <span className="text-slate-400">Library</span>
-                    </h1>
-                    <p className="text-slate-500 mt-3 font-medium">Synchronized stock management for {activeBrand?.name}.</p>
-                </div>
-                <button 
-                    onClick={() => setIsCreateModalOpen(true)}
-                    className="px-6 py-3 bg-slate-900 rounded-2xl text-xs font-black text-white hover:scale-[1.02] shadow-xl shadow-slate-900/20 active:scale-[0.98] transition-all flex items-center gap-2"
-                >
-                    <Plus size={16} />
-                    Register New Product
-                </button>
-            </header>
-
             <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
                 <div className="xl:col-span-3 space-y-6">
                     <div className="bg-white p-6 rounded-[2.5rem] border border-slate-200/60 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4 overflow-hidden">
-                        <div className="relative group w-full md:w-96">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" size={16} />
-                            <input 
-                                type="text" 
-                                placeholder="Search by name or ID..." 
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-12 pr-6 py-3 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-medium w-full focus:ring-2 focus:ring-slate-900/5 transition-all outline-none"
-                            />
+                        <div className="flex items-center gap-6 flex-1 w-full">
+                            <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-xl bg-slate-900 flex items-center justify-center text-white">
+                                    <Database size={14} />
+                                </div>
+                                <h2 className="text-sm font-black text-slate-900 uppercase tracking-tight">Product Library</h2>
+                            </div>
+                            <div className="w-px h-6 bg-slate-200 hidden md:block" />
+                            <div className="relative group flex-1 max-w-md">
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" size={14} />
+                                <input 
+                                    type="text" 
+                                    placeholder="Search catalog..." 
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="pl-10 pr-6 py-2.5 bg-slate-50 border border-slate-200/60 rounded-xl text-xs font-medium w-full focus:ring-2 focus:ring-slate-900/5 transition-all outline-none"
+                                />
+                            </div>
                         </div>
-                        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 md:pb-0">
-                             {categories.map(cat => (
-                                <button 
-                                    key={cat}
-                                    onClick={() => setSelectedCategory(cat)}
-                                    className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shrink-0 ${selectedCategory === cat ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/10' : 'text-slate-400 hover:text-slate-900 hover:bg-slate-50'}`}
-                                >
-                                    {cat}
-                                </button>
-                             ))}
+                        <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+                                 {categories.map(cat => (
+                                    <button 
+                                        key={cat}
+                                        onClick={() => setSelectedCategory(cat)}
+                                        className={cn(
+                                            "px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all shrink-0",
+                                            selectedCategory === cat ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10" : "text-slate-400 hover:text-slate-900 hover:bg-slate-50"
+                                        )}
+                                    >
+                                        {cat}
+                                    </button>
+                                 ))}
+                            </div>
+                            <button 
+                                onClick={() => setIsCreateModalOpen(true)}
+                                className="px-4 py-2.5 bg-slate-900 rounded-xl text-[10px] font-black text-white hover:scale-[1.02] shadow-xl shadow-slate-900/20 active:scale-[0.98] transition-all flex items-center gap-2 shrink-0"
+                            >
+                                <Plus size={14} />
+                                Register
+                            </button>
                         </div>
                     </div>
 

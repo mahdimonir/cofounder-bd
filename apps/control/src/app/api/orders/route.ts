@@ -5,12 +5,8 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const brandId = searchParams.get('brandId');
 
-    if (!brandId) {
-        return NextResponse.json({ error: 'Brand ID required' }, { status: 400 });
-    }
-
     try {
-        const orders = await OrderService.getOrders({ brandId: brandId });
+        const orders = await OrderService.getOrders(brandId ? { brandId } : {});
         return NextResponse.json(orders);
     } catch (error) {
         console.error('Orders API Error:', error);

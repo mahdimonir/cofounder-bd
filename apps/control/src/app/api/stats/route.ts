@@ -5,32 +5,29 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const brandId = searchParams.get('brandId');
 
-    if (!brandId) {
-        return NextResponse.json({ error: 'Brand ID required' }, { status: 400 });
-    }
+    const where = brandId ? { brandId } : {};
 
     try {
-        // Mocking some stats for now, but drawing real counts from DB where available
-        const totalOrders = await prisma.order.count({ where: { brandId } });
+        const totalOrders = await prisma.order.count({ where });
         const recentOrders = await prisma.order.findMany({
-            where: { brandId },
+            where,
             take: 5,
             orderBy: { createdAt: 'desc' }
         });
 
         const revenue = await prisma.order.aggregate({
-            where: { brandId, status: 'DELIVERED' },
+            where: { ...where, status: 'DELIVERED' },
             _sum: { total: true }
         });
 
         const activeOrders = await prisma.order.count({
             where: {
-                brandId,
+                ...where,
                 status: { in: ['PENDING', 'PROCESSING', 'SHIPPED'] }
             }
         });
 
-        const totalProducts = await prisma.product.count({ where: { brandId } });
+        const totalProducts = await prisma.product.count({ where });
 
         return NextResponse.json({
             revenue: revenue._sum.total || 0,

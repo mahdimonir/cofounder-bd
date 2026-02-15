@@ -5,11 +5,9 @@ import { useBrand } from '@/providers/BrandProvider';
 import { formatPrice } from '@cofounder/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-    Calendar,
     ChevronDown,
     ChevronUp,
     CreditCard,
-    Download,
     Loader2,
     MapPin,
     Package,
@@ -36,9 +34,7 @@ export default function OrdersPage() {
         
         // Use the brand's domain if available
         if (brandDomain) {
-            // Ensure protocol is present
-            const protocol = brandDomain.includes('localhost') || brandDomain.includes('127.0.0.1') ? 'http://' : 'https://';
-            const base = brandDomain.startsWith('http') ? brandDomain : `${protocol}${brandDomain}`;
+            const base = brandDomain.startsWith('http') ? brandDomain : `https://${brandDomain}`;
             return `${base}${url.startsWith('/') ? '' : '/'}${url}`;
         }
         
@@ -46,16 +42,23 @@ export default function OrdersPage() {
     };
 
     useEffect(() => {
-        if (!activeBrand) return;
-
         const fetchOrders = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`/api/orders?brandId=${activeBrand.id}`);
+                // If no activeBrand ID, fetch all orders (Global View)
+                const url = activeBrand?.id ? `/api/orders?brandId=${activeBrand.id}` : '/api/orders';
+                const res = await fetch(url);
                 const data = await res.json();
-                setOrders(data);
+                
+                if (Array.isArray(data)) {
+                    setOrders(data);
+                } else {
+                    console.error('Expected array of orders, got:', data);
+                    setOrders([]);
+                }
             } catch (error) {
                 console.error('Fetch Orders Error:', error);
+                setOrders([]);
             } finally {
                 setLoading(false);
             }
@@ -98,40 +101,24 @@ export default function OrdersPage() {
 
     return (
         <div className="max-w-7xl">
-            <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div>
-                    <div className="flex items-center gap-2 text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mb-3">
-                        <ShoppingBag size={12} />
-                        Transaction Management
-                    </div>
-                    <h1 className="text-4xl font-black text-slate-900 leading-none tracking-tight">
-                        Orders <span className="text-slate-400">Portal</span>
-                    </h1>
-                    <p className="text-slate-500 mt-3 font-medium">Manage and track all customer transactions for {activeBrand?.name}.</p>
-                </div>
-                <div className="flex items-center gap-3">
-                    <button className="px-5 py-2.5 bg-white border border-slate-200/60 rounded-2xl text-xs font-black text-slate-900 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
-                        <Calendar size={14} />
-                        Date Range
-                    </button>
-                    <button className="px-5 py-2.5 bg-slate-900 rounded-2xl text-xs font-black text-white hover:scale-[1.02] shadow-xl shadow-slate-900/20 active:scale-[0.98] transition-all flex items-center gap-2">
-                        <Download size={14} />
-                        Export CSV
-                    </button>
-                </div>
-            </header>
-
             <div className="bg-white rounded-[2.5rem] border border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.02)] overflow-hidden">
                 <div className="p-8 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-2">
+                             <div className="w-8 h-8 rounded-xl bg-slate-900 flex items-center justify-center text-white">
+                                <ShoppingBag size={14} />
+                             </div>
+                             <h2 className="text-sm font-black text-slate-900 uppercase tracking-tight">Orders Ledger</h2>
+                        </div>
+                        <div className="w-px h-6 bg-slate-200" />
                         <div className="relative group">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" size={16} />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" size={14} />
                             <input
                                 type="text"
-                                placeholder="Search by Order ID or Customer..."
+                                placeholder="Search products, IDs or customers..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-12 pr-6 py-3 bg-white border border-slate-200/60 rounded-2xl text-xs font-medium w-full md:w-80 focus:ring-2 focus:ring-slate-900/5 transition-all outline-none"
+                                className="pl-10 pr-6 py-2.5 bg-white border border-slate-200/60 rounded-xl text-xs font-medium w-full md:w-64 focus:ring-2 focus:ring-slate-900/5 transition-all outline-none"
                             />
                         </div>
                     </div>

@@ -6,10 +6,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 import {
     Bell,
     ChevronDown,
-    Globe,
     LayoutDashboard,
-    LogOut,
     Package,
+    RefreshCw,
     Search,
     Settings,
     ShoppingBag,
@@ -23,6 +22,7 @@ export function PlatformShell({ children }: { children: React.ReactNode }) {
     const { activeBrand, setActiveBrand, brands } = useBrand();
     const pathname = usePathname();
     const [isBrandSwitcherOpen, setIsBrandSwitcherOpen] = useState(false);
+    const [isCollapsed, setIsCollapsed] = useState(true);
 
     if (pathname === '/login') {
         return <>{children}</>;
@@ -31,52 +31,57 @@ export function PlatformShell({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex h-screen bg-[#F8FAFC] overflow-hidden font-sans">
             {/* Sidebar */}
-            <aside className="w-72 bg-white border-r border-slate-200/60 flex flex-col shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
-                <div className="p-8">
-                    <div className="flex items-center gap-3 mb-12">
-                        <div className="w-10 h-10 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/20 rotate-3 group hover:rotate-0 transition-transform duration-300">
+            <aside 
+                className={cn(
+                    "bg-white border-r border-slate-200/60 flex flex-col shadow-[4px_0_24px_rgba(0,0,0,0.02)] transition-all duration-300 relative z-50",
+                    isCollapsed ? "w-14" : "w-64"
+                )}
+            >
+                <div className={cn("p-6 flex-1 overflow-y-auto no-scrollbar", isCollapsed && "p-2")}>
+                    <div className={cn("flex items-center gap-3 mb-12 relative", isCollapsed && "justify-center")}>
+                        <div className="w-10 h-10 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/20 rotate-3 group hover:rotate-0 transition-transform duration-300 shrink-0">
                             <span className="text-white font-black text-lg">C</span>
                         </div>
-                        <div>
-                            <span className="font-black tracking-tight text-slate-900 text-xl block leading-none">Control</span>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1 block">Ecosystem Admin</span>
-                        </div>
+                        {!isCollapsed && (
+                            <motion.div
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                            >
+                                <span className="font-black tracking-tight text-slate-900 text-xl block leading-none">Control</span>
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1 block">Ecosystem Admin</span>
+                            </motion.div>
+                        )}
+                        
                     </div>
 
                     <div className="space-y-1.5">
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 block ml-4">Main Menu</span>
+                        {!isCollapsed && (
+                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 block ml-4">Main Menu</span>
+                        )}
                         <nav className="space-y-1">
-                            <SidebarLink href="/" icon={LayoutDashboard} label="Dashboard" active={pathname === '/'} />
-                            <SidebarLink href="/orders" icon={ShoppingBag} label="Orders" active={pathname === '/orders'} />
-                            <SidebarLink href="/inventory" icon={Package} label="Inventory" active={pathname === '/inventory'} />
-                            <SidebarLink href="/customers" icon={Users} label="Customers" active={pathname === '/customers'} />
-                            <SidebarLink href="/settings" icon={Settings} label="Settings" active={pathname === '/settings'} />
+                            <SidebarLink href="/" icon={LayoutDashboard} label="Dashboard" active={pathname === '/'} collapsed={isCollapsed} />
+                            <SidebarLink href="/orders" icon={ShoppingBag} label="Orders" active={pathname === '/orders'} collapsed={isCollapsed} />
+                            <SidebarLink href="/inventory" icon={Package} label="Inventory" active={pathname === '/inventory'} collapsed={isCollapsed} />
+                            <SidebarLink href="/customers" icon={Users} label="Customers" active={pathname === '/customers'} collapsed={isCollapsed} />
+                            <SidebarLink href="/settings" icon={Settings} label="Settings" active={pathname === '/settings'} collapsed={isCollapsed} />
                         </nav>
                     </div>
                 </div>
 
-                <div className="mt-auto p-6 space-y-4">
-                    <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
-                        <div className="flex items-center gap-3 mb-3">
-                            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-                                <Globe size={16} />
-                            </div>
-                            <span className="text-xs font-bold text-slate-900">Live Sites</span>
-                        </div>
-                        <p className="text-[10px] text-slate-500 leading-relaxed mb-3">All 4 brand storefronts are active and synchronizing data.</p>
-                        <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                            <motion.div 
-                                initial={{ width: 0 }}
-                                animate={{ width: '100%' }}
-                                transition={{ duration: 1.5, ease: "easeOut" }}
-                                className="h-full bg-blue-500" 
-                            />
-                        </div>
-                    </div>
-
-                    <button className="flex items-center gap-3 w-full px-5 py-3.5 text-sm font-bold text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all duration-200">
-                        <LogOut size={18} />
-                        Sign Out
+                <div className={cn("p-4 space-y-4 border-t border-slate-100", isCollapsed && "p-2")}>
+                    <button 
+                        onClick={() => setIsCollapsed(!isCollapsed)}
+                        className={cn(
+                            "flex items-center gap-3 w-full py-4 text-sm font-bold text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-2xl transition-all duration-200",
+                            isCollapsed ? "justify-center" : "px-5"
+                        )}
+                    >
+                        <motion.div
+                            animate={{ rotate: isCollapsed ? 180 : 0 }}
+                            className="shrink-0"
+                        >
+                            <ChevronDown size={18} className="-rotate-90" />
+                        </motion.div>
                     </button>
                 </div>
             </aside>
@@ -91,10 +96,10 @@ export function PlatformShell({ children }: { children: React.ReactNode }) {
                             className="group flex items-center gap-3 px-4 py-2 rounded-2xl hover:bg-slate-50 transition-all duration-200 border border-slate-100 hover:border-slate-200 shadow-sm"
                         >
                             <div className="w-7 h-7 rounded-xl bg-slate-900 flex items-center justify-center text-[11px] text-white font-black uppercase shadow-md group-hover:scale-110 transition-transform">
-                                {activeBrand?.name[0]}
+                                {activeBrand ? activeBrand.name[0] : 'A'}
                             </div>
                             <div className="text-left">
-                                <span className="text-sm font-black text-slate-900 block leading-none">{activeBrand?.name}</span>
+                                <span className="text-sm font-black text-slate-900 block leading-none">{activeBrand ? activeBrand.name : 'All Brands'}</span>
                                 <span className="text-[10px] font-bold text-slate-400 block mt-0.5 tracking-wide">Switch Context</span>
                             </div>
                             <ChevronDown size={14} className={cn("text-slate-400 transition-transform duration-300", isBrandSwitcherOpen && "rotate-180")} />
@@ -114,10 +119,33 @@ export function PlatformShell({ children }: { children: React.ReactNode }) {
                                         transition={{ duration: 0.2, ease: "easeOut" }}
                                         className="absolute top-full left-0 mt-3 w-64 bg-white border border-slate-200/60 rounded-[1.5rem] shadow-2xl p-2 z-50 backdrop-blur-xl"
                                     >
-                                        <div className="p-3 mb-2">
-                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Available Brands</span>
+                                        <div className="px-3 py-2 border-b border-slate-50">
+                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Context Management</span>
                                         </div>
-                                        <div className="space-y-1">
+                                        <div className="p-1.5 space-y-1">
+                                            <button
+                                                onClick={() => {
+                                                    setActiveBrand({ id: '', name: 'All Brands', slug: 'all', domain: '' });
+                                                    setIsBrandSwitcherOpen(false);
+                                                }}
+                                                className={cn(
+                                                    "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs transition-all duration-200",
+                                                    !activeBrand || activeBrand.id === ''
+                                                        ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20 font-bold" 
+                                                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                                                )}
+                                            >
+                                                <div className={cn(
+                                                    "w-6 h-6 rounded-lg flex items-center justify-center text-[9px] font-black uppercase",
+                                                    !activeBrand || activeBrand.id === '' ? "bg-white/20" : "bg-slate-100"
+                                                )}>
+                                                    A
+                                                </div>
+                                                Global View (All)
+                                            </button>
+
+                                            <div className="h-px bg-slate-50 my-1 mx-2" />
+
                                             {brands.map(brand => (
                                                 <button
                                                     key={brand.id}
@@ -126,7 +154,7 @@ export function PlatformShell({ children }: { children: React.ReactNode }) {
                                                         setIsBrandSwitcherOpen(false);
                                                     }}
                                                     className={cn(
-                                                        "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all duration-200",
+                                                        "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs transition-all duration-200",
                                                         activeBrand?.id === brand.id 
                                                             ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20 font-bold" 
                                                             : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
@@ -158,7 +186,14 @@ export function PlatformShell({ children }: { children: React.ReactNode }) {
                             />
                         </div>
 
-                        <button className="relative w-10 h-10 rounded-2xl bg-white border border-slate-200/60 flex items-center justify-center text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all">
+                        <button 
+                            onClick={() => window.location.reload()}
+                            className="w-10 h-10 rounded-2xl bg-white border border-slate-200/60 flex items-center justify-center text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all shadow-sm active:scale-95"
+                        >
+                            <RefreshCw size={18} />
+                        </button>
+
+                        <button className="relative w-10 h-10 rounded-2xl bg-white border border-slate-200/60 flex items-center justify-center text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all shadow-sm">
                             <Bell size={20} />
                             <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
                         </button>
@@ -192,21 +227,33 @@ export function PlatformShell({ children }: { children: React.ReactNode }) {
     );
 }
 
-function SidebarLink({ href, icon: Icon, label, active = false }: { href: string, icon: any, label: string, active?: boolean }) {
+function SidebarLink({ href, icon: Icon, label, active = false, collapsed = false }: { href: string, icon: any, label: string, active?: boolean, collapsed?: boolean }) {
     return (
         <Link href={href} className={cn(
-            "flex items-center gap-4 w-full px-5 py-4 rounded-[1.25rem] text-sm font-black transition-all duration-300 relative group",
+            "flex items-center w-full rounded-[1.25rem] text-sm font-black transition-all duration-300 relative group",
             active 
                 ? "bg-slate-900 text-white shadow-2xl shadow-slate-900/30" 
-                : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                : "text-slate-500 hover:bg-slate-50 hover:text-slate-900",
+            collapsed ? "justify-center py-4" : "gap-4 px-5 py-4"
         )}>
-            <Icon size={20} className={cn("transition-transform duration-300", active ? "scale-110" : "group-hover:scale-110")} />
-            {label}
-            {active && (
+            <Icon size={20} className={cn("transition-transform duration-300 shrink-0", active ? "scale-110" : "group-hover:scale-110")} />
+            {!collapsed && (
+                <motion.span
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="truncate"
+                >
+                    {label}
+                </motion.span>
+            )}
+            {active && !collapsed && (
                 <motion.div 
                     layoutId="active-pill"
                     className="absolute right-3 w-1.5 h-1.5 bg-white rounded-full"
                 />
+            )}
+            {active && collapsed && (
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-slate-900 rounded-l-full" />
             )}
         </Link>
     );
