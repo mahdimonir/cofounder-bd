@@ -22,6 +22,14 @@ export const HEJEL_PRODUCTS = [
   'Soft Beige & Pink Floral', 'Teal Green', 'Warm Taupe Mauve'
 ];
 
+export const JOIPURI_PRODUCTS = [
+  'Black & White', 'Black', 'Burnt Umber', 'Crimson Coral & White',
+  'Dark Cayan', 'Dark pink', 'Dark yellow & White', 'Deep Teal & White',
+  'Gray & white', 'Olive Moss & White', 'Orange & White', 'Oxblood',
+  'Pink & White', 'Pink', 'White & Orange', 'White & Yellow',
+  'White &_', 'Yellow & White', 'light pink'
+];
+
 export const COMBOS: Combo[] = [
   {
     id: 'pack-6',
@@ -47,7 +55,17 @@ export const COMBOS: Combo[] = [
     price: 1050,
     originalPrice: 1200,
     image: `/products/${name}.png`,
-    description: 'Fabric: Cotton | Size: Free Size | Set: Kameez, Salwar & Dupatta',
+    description: `• Product Name: Hejel\n• Product Code: MH400812\n• Colour: ${name}\n• Fabric: Cotton\n• Design: Relaxed and modest\n• Set Includes: Kameez, Salwar & Dupatta\n• Size: Free Size`,
+    isPack: false,
+    color: name
+  })),
+  ...JOIPURI_PRODUCTS.map(name => ({
+    id: `joipuri-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+    name: `${name} Joipuri`,
+    price: 850,
+    originalPrice: 1000,
+    image: `/products/Joipuri/${name}.png`,
+    description: `Product Details:\n• Product Code: MJ190510\n• Fabric: Premium Joipuri Cotton\n• Design: Traditional yet elegant\n• Set Includes: Kameez, Salwar & Unstitched Dupatta\n• Size: Free Size (Fits most)`,
     isPack: false,
     color: name
   }))

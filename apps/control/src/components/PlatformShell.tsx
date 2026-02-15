@@ -165,7 +165,7 @@ export function PlatformShell({ children }: { children: React.ReactNode }) {
 
                         <div className="flex items-center gap-4 pl-6 border-l border-slate-200/60">
                             <div className="text-right">
-                                 <span className="text-sm font-black text-slate-900 block leading-none">Mahdi</span>
+                                 <span className="text-sm font-black text-slate-900 block leading-none">Admin</span>
                                  <span className="text-[10px] font-bold text-slate-400 block mt-0.5">Super Administrator</span>
                             </div>
                             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-800 to-black p-[2px] shadow-lg">

@@ -37,6 +37,21 @@ export default function InventoryPage() {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const resolveImageUrl = (url: string | null | undefined, brandDomain?: string) => {
+        if (!url) return null;
+        if (url.startsWith('http')) return url;
+        
+        // Use the brand's domain if available
+        const domain = brandDomain || activeBrand?.domain;
+        if (domain) {
+            const protocol = domain.includes('localhost') || domain.includes('127.0.0.1') ? 'http://' : 'https://';
+            const base = domain.startsWith('http') ? domain : `${protocol}${domain}`;
+            return `${base}${url.startsWith('/') ? '' : '/'}${url}`;
+        }
+        
+        return url;
+    };
+
     useEffect(() => {
         if (!activeBrand) return;
         
@@ -158,7 +173,7 @@ export default function InventoryPage() {
                                             <div className="flex gap-6">
                                                 <div className="w-24 h-24 rounded-3xl bg-slate-100 overflow-hidden relative shrink-0">
                                                     <img 
-                                                        src={product.image} 
+                                                        src={resolveImageUrl(product.image, product.brandDomain) || ''} 
                                                         alt={product.name}
                                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                                     />

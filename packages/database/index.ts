@@ -37,7 +37,14 @@ export const OrderService = {
 
         const data = await prisma.order.findMany({
             where,
-            include: { items: true },
+            include: {
+                items: true,
+                brand: {
+                    select: {
+                        domain: true
+                    }
+                }
+            },
             orderBy: { createdAt: 'desc' },
             take: 100
         });
@@ -46,10 +53,26 @@ export const OrderService = {
             id: o.id,
             customerName: o.customerName || 'Unknown',
             customerPhone: o.customerPhone || 'N/A',
+            customerAddress: o.customerAddress || undefined,
+            customerArea: o.customerArea || undefined,
             total: o.total,
+            deliveryCharge: o.deliveryCharge,
             status: o.status as Order['status'],
+            paymentMethod: o.paymentMethod,
+            shippingAddress: o.shippingAddress,
             createdAt: o.createdAt.toISOString(),
-            brandId: o.brandId || undefined
+            brandId: o.brandId || undefined,
+            brandDomain: o.brand?.domain || undefined,
+            items: o.items.map(item => ({
+                id: item.id,
+                productId: item.productId,
+                name: item.name,
+                quantity: item.quantity,
+                price: item.price,
+                selectedSize: item.selectedSize,
+                selectedColor: item.selectedColor,
+                imageUrl: item.imageUrl
+            }))
         }));
     },
 
@@ -71,6 +94,13 @@ export const ProductService = {
 
         const data = await prisma.product.findMany({
             where,
+            include: {
+                brand: {
+                    select: {
+                        domain: true
+                    }
+                }
+            },
             orderBy: { createdAt: 'desc' }
         });
 
@@ -81,7 +111,8 @@ export const ProductService = {
             description: p.description,
             image: p.imageUrl,
             category: p.category || 'General',
-            brandId: p.brandId || undefined
+            brandId: p.brandId || undefined,
+            brandDomain: p.brand?.domain || undefined
         }));
     },
 
