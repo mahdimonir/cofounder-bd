@@ -109,7 +109,7 @@ Represents a customer order.
 | `customerAddress` | String | Full delivery address. |
 | `customerArea` | String | Delivery area: `'inside'` (Dhaka) or `'outside'`. |
 | `total` | Float | Total bill amount (Subtotal + Delivery). |
-| `deliveryCharge` | Float | Shipping cost (80 or 130). |
+| `deliveryCharge` | Float | Shipping cost (80 or 120). |
 | `status` | String (Enum) | Current order status. See Enums below. |
 | `createdAt` | DateTime | ISO 8601 Timestamp. |
 | `updatedAt` | DateTime | ISO 8601 Timestamp. |
@@ -144,4 +144,4 @@ Represents a product inside an order.
 | Value | Cost |
 | :--- | :--- |
 | `inside` | Dhaka City (৳80) |
-| `outside` | Outside Dhaka (৳130) |
+| `outside` | Outside Dhaka (৳120) |

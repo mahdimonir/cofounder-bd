@@ -1,7 +1,3 @@
-/**
- * Shared utility functions for order processing, pricing, and formatting.
- */
-
 export type CheckoutMode = 'SIMPLE' | 'WHATSAPP' | 'ONLINE';
 
 export interface BrandConfig {
@@ -41,7 +37,7 @@ export const calculateDeliveryCharge = (
     if (options.freeThreshold && subtotal >= options.freeThreshold) return 0;
     if (!options.freeThreshold && subtotal >= 5000) return 0; // Default
     if (!area) return 0;
-    return area === 'inside' ? 80 : 130;
+    return area === 'inside' ? 80 : 120;
 };
 
 /**

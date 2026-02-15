@@ -68,5 +68,5 @@ export const FAQS: FAQItem[] = [
   { question: 'Will the color remain the same?', answer: 'It will match 90–95% with the picture. There might be a slight difference due to lighting or screen resolution.' },
   { question: 'How long will delivery take?', answer: 'You will receive it within 2-3 days anywhere in Bangladesh.' },
   { question: 'How do I order?', answer: 'Just send your Name, Address, Phone Number, and Size to confirm your order (or order directly from the website).' },
-  { question: 'How much is the delivery charge?', answer: '130 Taka nationwide, 80 Taka inside Chittagong. Delivery is completely FREE if you buy 3 pieces or more!' },
+  { question: 'How much is the delivery charge?', answer: '120 Taka nationwide, 80 Taka inside Chittagong. Delivery is completely FREE if you buy 3 pieces or more!' },
 ];
