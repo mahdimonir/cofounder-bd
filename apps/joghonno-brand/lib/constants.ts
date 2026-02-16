@@ -203,7 +203,8 @@ export const PRICING_PLANS = {
                         "মাসিক ১৫টি প্রিমিয়াম কন্টেন্ট",
                         "কন্টেন্ট ক্যালেন্ডার পরিকল্পনা",
                         "ফেসবুক ও ইনস্টাগ্রাম অ্যাড সেটআপ",
-                        "বেসিক অডিয়েন্স টার্গেটিং"
+                        "বেসিক অডিয়েন্স টার্গেটিং",
+                        "$৩০ অ্যাওয়ারনেস অ্যাড রান"
                     ]
                 },
                 {
@@ -239,7 +240,8 @@ export const PRICING_PLANS = {
                     items: [
                         "মাসিক ২০টি হাই-এন্ড কন্টেন্ট",
                         "ফুল অ্যাড ক্যাম্পেইন ম্যানেজমেন্ট",
-                        "কাস্টম অডিয়েন্স ও রিটার্গেটিং"
+                        "কাস্টম অডিয়েন্স ও রিটার্গেটিং",
+                        "$৬০ প্রতি মাসে অ্যাড রান"
                     ]
                 },
                 {
@@ -321,7 +323,8 @@ export const PRICING_PLANS = {
                         "15 Premium Contents Per Month",
                         "Content Calendar Planning",
                         "FB & Instagram Ad Campaign Setup",
-                        "Basic Audience Targeting"
+                        "Basic Audience Targeting",
+                        "$30 Ad run for awareness"
                     ]
                 },
                 {
@@ -357,7 +360,8 @@ export const PRICING_PLANS = {
                     items: [
                         "20 High-end Contents Per Month",
                         "Full Ad Campaign Management",
-                        "Custom Audience & Retargeting"
+                        "Custom Audience & Retargeting",
+                        "$60 Ad run per month"
                     ]
                 },
                 {
