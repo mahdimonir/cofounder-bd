@@ -4,7 +4,7 @@ import { trackEvent } from '@/lib/facebookPixel';
 import { calculateDeliveryCharge, calculateSavings, formatPrice } from '@cofounder/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, Package, Receipt, ShieldCheck, Star, Truck, X } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { products, type ProductFamily, type ProductVariant } from '../data/products';
 
@@ -19,14 +19,16 @@ interface CheckoutProps {
 }
 
 export default function Checkout({ initialProducts }: CheckoutProps) {
-  const displayProducts = initialProducts?.length ? initialProducts.map(p => ({
-    id: p.id,
-    name: p.name,
-    description: p.description,
-    image: p.imageUrl,
-    category: p.category,
-    variants: p.variants as any[]
-  })) : products;
+  const displayProducts = useMemo(() => {
+    return initialProducts?.length ? initialProducts.map(p => ({
+      id: p.id,
+      name: p.name,
+      description: p.description,
+      image: p.imageUrl,
+      category: p.category,
+      variants: p.variants as any[]
+    })) : products;
+  }, [initialProducts]);
 
   const [selectedItems, setSelectedItems] = useState<Record<string, SelectedItem>>({});
   const [deliveryArea, setDeliveryArea] = useState<'inside' | 'outside' | null>('inside');
@@ -57,11 +59,8 @@ export default function Checkout({ initialProducts }: CheckoutProps) {
 
   const handleSelect = (product: ProductFamily, variant: ProductVariant) => {
     const key = `${product.id}-${variant.weight}`;
-    setSelectedItems(prev => {
-      if (prev[key]) {
-        const { [key]: _, ...rest } = prev;
-        return rest;
-      }
+    
+    if (!selectedItems[key]) {
       trackEvent("AddToCart", {
         content_ids: [product.id],
         content_name: product.name,
@@ -69,6 +68,13 @@ export default function Checkout({ initialProducts }: CheckoutProps) {
         value: variant.price,
         currency: "BDT"
       });
+    }
+
+    setSelectedItems(prev => {
+      if (prev[key]) {
+        const { [key]: _, ...rest } = prev;
+        return rest;
+      }
       return {
         ...prev,
         [key]: { productId: product.id, variant, quantity: 1 }

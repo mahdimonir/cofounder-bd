@@ -60,12 +60,15 @@ export default function Hero() {
             transition={{ duration: 1.2, delay: 0.4 }}
             className="lg:col-span-12 xl:col-span-5 relative"
           >
-            <div className="relative aspect-square w-full max-w-[500px] mx-auto rounded-[3rem] overflow-hidden bg-brand-muted/20 border border-brand-primary/5 p-8 flex items-center justify-center group">
-               <img 
-                 src="/hero.png" 
-                 alt="Premium Dates" 
-                 className="w-full h-full object-contain filter drop-shadow-2xl group-hover:scale-105 transition-transform duration-1000"
-               />
+            <div className="relative aspect-square w-full max-w-[500px] mx-auto rounded-[3rem] overflow-hidden bg-black border border-brand-primary/5 flex items-center justify-center group">
+               <iframe 
+                 className="w-full h-full"
+                 src="https://www.youtube.com/embed/6LG3oKFY8LE?autoplay=1&mute=1&loop=1&playlist=6LG3oKFY8LE" 
+                 title="YouTube video player" 
+                 frameBorder="0" 
+                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                 allowFullScreen
+               ></iframe>
                
                {/* Subtle Glow */}
                <div className="absolute inset-0 bg-brand-primary/5 blur-3xl -z-10 rounded-full scale-75" />
