@@ -65,7 +65,7 @@ export const OrderService = {
             brandDomain: o.brand?.domain || undefined,
             items: o.items.map(item => ({
                 id: item.id,
-                productId: item.productId,
+                productId: item.productId || '',
                 name: item.name,
                 quantity: item.quantity,
                 price: item.price,
@@ -73,7 +73,7 @@ export const OrderService = {
                 selectedColor: item.selectedColor,
                 imageUrl: item.imageUrl
             }))
-        }));
+        })) as Order[];
     },
 
     async updateOrderStatus(orderId: string, status: Order['status']): Promise<void> {

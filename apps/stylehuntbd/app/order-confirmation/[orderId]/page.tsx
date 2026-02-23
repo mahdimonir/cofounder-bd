@@ -105,7 +105,7 @@ export default async function OrderConfirmationPage(props: {
             )}
             <p className="mt-2">
               <span className="text-gray-600 font-semibold">Phone:</span>{" "}
-              {(order.shippingAddress as any).phoneNumber || order.phoneNumber}
+              {(order.shippingAddress as any).phoneNumber || order.customerPhone}
             </p>
             {(order.shippingAddress as any).email && (
               <p>
@@ -126,15 +126,15 @@ export default async function OrderConfirmationPage(props: {
               >
                 <div className="relative w-20 h-20 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
                   <Image
-                    src={item.product.imageUrl}
-                    alt={item.product.name}
+                    src={item.imageUrl || item.product?.imageUrl || ""}
+                    alt={item.name || item.product?.name || "Product Image"}
                     fill
                     className="object-cover"
                   />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900">
-                    {item.product.name}
+                    {item.name || item.product?.name}
                   </h3>
                   <div className="flex gap-2 text-sm text-gray-600 mt-1">
                     {item.selectedSize && (
