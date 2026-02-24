@@ -1,6 +1,7 @@
 "use client";
 import { useCartStore } from "@/lib/cart-store";
 import { trackEvent } from "@/lib/facebookPixel";
+import { parseDescription } from "@/lib/utils";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -61,6 +62,7 @@ export default function ProductDetailModal({
       content_ids: [product.originalId || product.id],
       content_name: product.name,
       content_type: "product",
+      content_category: product.category,
       value: product.price,
       currency: "BDT",
       vendor: "stylehuntbd"
@@ -91,6 +93,7 @@ export default function ProductDetailModal({
       content_ids: [product.originalId || product.id],
       content_name: product.name,
       content_type: "product",
+      content_category: product.category,
       value: product.price,
       currency: "BDT",
       vendor: "stylehuntbd"
@@ -109,6 +112,7 @@ export default function ProductDetailModal({
         content_ids: [product.originalId || product.id],
         content_name: product.name,
         content_type: "product",
+        content_category: product.category,
         value: product.price,
         currency: "BDT",
         vendor: "stylehuntbd"
@@ -175,8 +179,8 @@ export default function ProductDetailModal({
                 <h2 className="text-2xl font-extrabold text-gray-900 mb-2 leading-tight">
                   {product.name}
                 </h2>
-                <p className="text-gray-600 text-sm leading-relaxed mb-6">
-                  {product.description}
+                <p className="text-gray-600 text-sm leading-relaxed mb-6 font-medium">
+                  {parseDescription(product.description).description}
                 </p>
 
                 <div className="flex items-baseline gap-3 mb-6">

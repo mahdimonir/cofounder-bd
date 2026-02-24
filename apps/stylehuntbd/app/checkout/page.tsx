@@ -1,7 +1,7 @@
 "use client";
 import { useCartStore } from "@/lib/cart-store";
 import { trackEvent } from "@/lib/facebookPixel";
-import { calculateDeliveryCharge, formatPrice } from "@cofounder/utils";
+import { formatPrice } from "@cofounder/utils";
 import {
   Loader2,
   Mail,
@@ -26,111 +26,27 @@ export default function CheckoutPage() {
   const { items, getTotal, clearCart } = useCartStore();
   const hasTrackedInitiate = useRef(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [districts, setDistricts] = useState<BDLocation[]>([]);
-  const [thanas, setThanas] = useState<BDLocation[]>([]);
-  const [loadingLocations, setLoadingLocations] = useState(false);
   const [formData, setFormData] = useState({
     fullName: session?.user?.name || "",
     email: session?.user?.email || "",
     phoneNumber: "",
-    district: "",
-    thana: "",
+    deliveryLocation: "inside", // 'inside' or 'outside'
     address: "",
-    postalCode: "",
   });
   const [selectedAddressId, setSelectedAddressId] = useState<string>("");
-  useEffect(() => {
-    async function fetchDistricts() {
-      try {
-        const cached = sessionStorage.getItem("bd_districts");
-        if (cached) {
-          setDistricts(JSON.parse(cached));
-          return;
-        }
-      } catch (e) {}
-      try {
-        const response = await fetch(
-          "https://bdapi.vercel.app/api/v.1/district",
-        );
-        const data = await response.json();
-        if (data.data) {
-          const sorted = data.data.sort((a: any, b: any) =>
-            a.name.localeCompare(b.name),
-          );
-          setDistricts(sorted);
-          sessionStorage.setItem("bd_districts", JSON.stringify(sorted));
-        }
-      } catch (error) {
-        console.error("Failed to fetch districts:", error);
-      }
-    }
-    fetchDistricts();
-  }, []);
   const subtotal = getTotal();
-  const deliveryCharge = calculateDeliveryCharge(
-    subtotal,
-    formData.district === "Chattogram" ? "inside" : "outside",
-  );
+  const deliveryCharge = subtotal >= 5000 ? 0 : (formData.deliveryLocation === "inside" ? 80 : 120);
   const total = subtotal + deliveryCharge;
 
   useEffect(() => {
-    async function fetchThanas() {
-      if (!formData.district || districts.length === 0) {
-        setThanas([]);
-        return;
-      }
-      const selectedDistrict = districts.find(
-        (d) => d.name === formData.district,
-      );
-      if (!selectedDistrict) return;
-      const cacheKey = `bd_thanas_${selectedDistrict.id}`;
-      try {
-        const cached = sessionStorage.getItem(cacheKey);
-        if (cached) {
-          setThanas(JSON.parse(cached));
-          return;
-        }
-      } catch (e) {}
-      setLoadingLocations(true);
-      try {
-        const response = await fetch(
-          `https://bdapi.vercel.app/api/v.1/upazilla/${selectedDistrict.id}`,
-        );
-        const data = await response.json();
-        let upazilas = [];
-        if (data.data && Array.isArray(data.data.upazilla)) {
-          upazilas = data.data.upazilla;
-        } else if (Array.isArray(data.data)) {
-          upazilas = data.data;
-        }
-        if (upazilas.length > 0) {
-          const sorted = upazilas.sort((a: any, b: any) =>
-            a.name.localeCompare(b.name),
-          );
-          setThanas(sorted);
-          sessionStorage.setItem(cacheKey, JSON.stringify(sorted));
-        } else {
-          console.warn(
-            "No upazilas found for district:",
-            selectedDistrict.name,
-          );
-          setThanas([]);
-        }
-      } catch (error) {
-        console.error("Failed to fetch upazilas:", error);
-        toast.error("Failed to load locations.");
-      } finally {
-        setLoadingLocations(false);
-      }
-    }
-    fetchThanas();
-  }, [formData.district, districts]);
-  useEffect(() => {
     if (items.length > 0 && !hasTrackedInitiate.current && subtotal > 0) {
       trackEvent("InitiateCheckout", {
-        value: total > 0 ? total : subtotal,
+        value: total,
         currency: "BDT",
-        content_ids: items.map(item => item.id),
+        content_ids: items.map(item => {
+          const rawId = String(item.originalId || item.id);
+          return rawId.includes("--") ? rawId.split("--")[0] : rawId;
+        }),
         content_type: "product",
         num_items: items.reduce((acc, item) => acc + item.quantity, 0),
         vendor: "stylehuntbd"
@@ -156,7 +72,6 @@ export default function CheckoutPage() {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-      ...(name === "district" ? { thana: "" } : {}),
     }));
     if (selectedAddressId) {
       setSelectedAddressId("");
@@ -183,8 +98,7 @@ export default function CheckoutPage() {
         fullName: addr.name,
         phoneNumber: addr.phoneNumber,
         address: addr.address,
-        district: addr.district,
-        thana: addr.thana,
+        deliveryLocation: addr.deliveryLocation || "inside",
       }));
       toast.success("Address details loaded");
     }
@@ -225,7 +139,10 @@ export default function CheckoutPage() {
       trackEvent("Purchase", {
         value: total,
         currency: "BDT",
-        content_ids: items.map(item => item.id),
+        content_ids: items.map(item => {
+          const rawId = String(item.originalId || item.id);
+          return rawId.includes("--") ? rawId.split("--")[0] : rawId;
+        }),
         content_type: "product",
         num_items: items.reduce((acc, item) => acc + item.quantity, 0),
         order_id: data.orderId,
@@ -242,8 +159,7 @@ export default function CheckoutPage() {
               name: formData.fullName,
               phoneNumber: formData.phoneNumber,
               address: formData.address,
-              district: formData.district,
-              thana: formData.thana,
+              deliveryLocation: formData.deliveryLocation,
               isPrimary: false,
             }),
           });
@@ -378,54 +294,39 @@ export default function CheckoutPage() {
                   )}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
-                      District
-                    </label>
-                    <select
-                      name="district"
-                      value={formData.district}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none appearance-none"
-                    >
-                      <option value="">Select District</option>
-                      {districts.map((d) => (
-                        <option key={d.id} value={d.name}>
-                          {d.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
-                      Upazila / Thana
-                      {loadingLocations && (
-                        <Loader2
-                          size={12}
-                          className="inline ml-2 animate-spin"
-                        />
-                      )}
-                    </label>
-                    <select
-                      name="thana"
-                      value={formData.thana}
-                      onChange={handleInputChange}
-                      required
-                      disabled={!formData.district || loadingLocations}
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none appearance-none disabled:opacity-50"
-                    >
-                      <option value="">Select Thana</option>
-                      {thanas.map((t) => (
-                        <option key={t.id} value={t.name}>
-                          {t.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
                   <div className="md:col-span-2">
                     <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
-                      Detailed Address
+                      Delivery Location
+                    </label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <label className={`flex items-center justify-center p-4 border rounded-xl cursor-pointer transition-all ${formData.deliveryLocation === 'inside' ? 'bg-blue-50 border-blue-500 text-blue-700 shadow-sm' : 'bg-neutral-50 border-neutral-200 text-neutral-600 hover:border-neutral-300'}`}>
+                        <input
+                          type="radio"
+                          name="deliveryLocation"
+                          value="inside"
+                          checked={formData.deliveryLocation === 'inside'}
+                          onChange={handleInputChange}
+                          className="sr-only"
+                        />
+                        <span className="font-medium text-sm">Inside Chattogram</span>
+                      </label>
+                      <label className={`flex items-center justify-center p-4 border rounded-xl cursor-pointer transition-all ${formData.deliveryLocation === 'outside' ? 'bg-blue-50 border-blue-500 text-blue-700 shadow-sm' : 'bg-neutral-50 border-neutral-200 text-neutral-600 hover:border-neutral-300'}`}>
+                        <input
+                          type="radio"
+                          name="deliveryLocation"
+                          value="outside"
+                          checked={formData.deliveryLocation === 'outside'}
+                          onChange={handleInputChange}
+                          className="sr-only"
+                        />
+                        <span className="font-medium text-sm">Outside Chattogram</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
+                      Full Address
                     </label>
                     <textarea
                       name="address"
@@ -433,21 +334,8 @@ export default function CheckoutPage() {
                       onChange={handleInputChange}
                       required
                       rows={3}
-                      placeholder="House no, Road no, Area description..."
+                      placeholder="e.g. House #12, Road #4, Sector #7, Chattogram"
                       className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none resize-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-neutral-700 mb-1.5">
-                      Postal Code (Optional)
-                    </label>
-                    <input
-                      type="text"
-                      name="postalCode"
-                      value={formData.postalCode}
-                      onChange={handleInputChange}
-                      placeholder="1200"
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
                     />
                   </div>
                   {session?.user && (

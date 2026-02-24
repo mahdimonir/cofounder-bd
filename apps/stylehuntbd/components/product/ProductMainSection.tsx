@@ -56,8 +56,9 @@ export default function ProductMainSection({
     : product.imageUrl;
 
   useEffect(() => {
+    const pid = String(product.id).includes("--") ? String(product.id).split("--")[0] : String(product.id);
     trackEvent("ViewContent", {
-      content_ids: [product.id],
+      content_ids: [pid],
       content_name: product.name,
       content_category: product.category,
       content_type: "product",
@@ -88,8 +89,9 @@ export default function ProductMainSection({
       selectedColor,
     });
 
+    const pid = String(product.id).includes("--") ? String(product.id).split("--")[0] : String(product.id);
     trackEvent("AddToCart", {
-      content_ids: [product.id],
+      content_ids: [pid],
       content_name: product.name,
       content_category: product.category,
       content_type: "product",

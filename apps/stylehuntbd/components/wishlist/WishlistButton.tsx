@@ -37,8 +37,9 @@ export default function WishlistButton({
     try {
       await toggleWishlistAction(productId);
       if (!inWishlist) {
+        const pid = String(productId).includes("--") ? String(productId).split("--")[0] : String(productId);
         trackEvent("AddToWishlist", {
-          content_ids: [productId],
+          content_ids: [pid],
           content_name: productName,
           value: productPrice,
           currency: "BDT",

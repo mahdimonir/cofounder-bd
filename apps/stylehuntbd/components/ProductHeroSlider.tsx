@@ -1,4 +1,5 @@
 "use client";
+import { parseDescription } from "@/lib/utils";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -62,8 +63,8 @@ const ProductHeroSlider = ({ products }: ProductHeroSliderProps) => {
               <h1 className="max-w-lg md:text-[48px] md:leading-[56px] text-3xl font-bold text-gray-900 mb-4">
                 {product.name}
               </h1>
-              <p className="text-gray-600 text-base md:text-lg max-w-md line-clamp-3 leading-relaxed">
-                {product.description}
+              <p className="text-gray-600 text-base md:text-lg max-w-md line-clamp-3 leading-relaxed mb-6 font-medium">
+                {parseDescription(product.description).summary}
               </p>
               {}
               <div className="mt-6 md:mt-8">
