@@ -16,7 +16,7 @@ const Logo: React.FC<LogoProps> = ({ variant = 'full', className = '' }) => {
       
       {/* Brand Name */}
       {variant === 'full' && (
-        <span className="font-bold text-xl tracking-tight uppercase whitespace-nowrap ml-1">
+        <span className="hidden sm:inline-flex font-bold text-lg sm:text-xl tracking-tight uppercase items-center ml-1">
           <span className="text-gray-900">Tuhin's</span>
           <span className="text-blue-600 ml-1.5 font-black">Collection</span>
         </span>

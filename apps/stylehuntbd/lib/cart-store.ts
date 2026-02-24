@@ -80,10 +80,12 @@ export const useCartStore = create<CartStore>()(
       },
       clearCart: () => set({ items: [] }),
       getTotal: () => {
-        return get().items.reduce(
-          (total, item) => total + item.price * item.quantity,
-          0,
-        );
+        const total = get().items.reduce((acc, item) => {
+          // Apply 20% Ramadan Discount to all items
+          const discountedPrice = item.price * 0.8;
+          return acc + discountedPrice * item.quantity;
+        }, 0);
+        return total;
       },
       getItemCount: () => {
         return get().items.reduce((count, item) => count + item.quantity, 0);

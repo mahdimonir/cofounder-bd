@@ -1,8 +1,9 @@
 "use client";
 import { useCartStore } from "@/lib/cart-store";
+import { calculateDiscountedPrice } from "@/lib/constants";
 import { trackEvent } from "@/lib/facebookPixel";
 import { parseDescription } from "@/lib/utils";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -43,6 +44,7 @@ export default function ProductMainSection({
   const [selectedColor, setSelectedColor] = useState<string | undefined>(
     initialColor || (product.color.length > 0 ? product.color[0] : undefined),
   );
+  const discountedPrice = calculateDiscountedPrice(product.price);
 
   // Filter images if onlyVariant is true
   const displayImages = onlyVariant && selectedColor
@@ -155,7 +157,7 @@ export default function ProductMainSection({
                     }`}
                     viewBox="0 0 20 20"
                   >
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1-81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
                 ))}
               </div>
@@ -167,19 +169,32 @@ export default function ProductMainSection({
               {parseDescription(product.description).description}
             </p>
           </div>
-          <div className="flex items-center gap-4 py-4 border-y border-gray-200">
-            <span className="text-3xl sm:text-4xl font-bold text-blue-600">
-              ৳{product.price.toFixed(2)}
-            </span>
-            {product.quantity > 0 ? (
-              <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
-                In Stock ({product.quantity})
-              </span>
-            ) : (
-              <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
-                Out of Stock
-              </span>
-            )}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 py-4 border-y border-gray-200">
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2 mb-1">
+                <Sparkles className="w-4 h-4 text-amber-500 fill-amber-500" />
+                <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Ramadan Festive Deal</span>
+              </div>
+              <div className="flex items-baseline gap-3">
+                <span className="text-3xl sm:text-4xl font-black text-emerald-700">
+                  ৳{discountedPrice.toLocaleString()}
+                </span>
+                <span className="text-xl text-gray-400 line-through decoration-emerald-900/30">
+                  ৳{product.price.toLocaleString()}
+                </span>
+              </div>
+            </div>
+            <div className="sm:ml-auto">
+              {product.quantity > 0 ? (
+                <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                  In Stock ({product.quantity})
+                </span>
+              ) : (
+                <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
+                  Out of Stock
+                </span>
+              )}
+            </div>
           </div>
           {}
           <div className="space-y-6 pt-2">

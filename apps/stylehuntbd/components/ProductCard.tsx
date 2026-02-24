@@ -1,5 +1,7 @@
 "use client";
+import { calculateDiscountedPrice } from "@/lib/constants";
 import { parseDescription } from "@/lib/utils";
+import { Tag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -26,6 +28,7 @@ export default function ProductCard({ product }: { product: Product }) {
   
   // Link to the real product page with the color pre-selected
   const productLink = `/shop/${product.originalId}?color=${encodeURIComponent(product.selectedColor)}&variant=true`;
+  const discountedPrice = calculateDiscountedPrice(product.price);
 
   return (
     <>
@@ -44,8 +47,16 @@ export default function ProductCard({ product }: { product: Product }) {
             className="group-hover:scale-110 transition-transform duration-500 object-contain p-1"
             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
+          {/* Ramadan Discount Badge */}
+          <div className="absolute top-0 left-0 z-20 overflow-hidden rounded-br-xl">
+             <div className="bg-amber-400 text-emerald-950 px-3 py-1 flex items-center gap-1.5 shadow-lg transform -skew-x-12 -ml-2">
+                <Tag className="w-3 h-3 fill-emerald-950/20" />
+                <span className="text-[10px] font-black uppercase tracking-tighter">20% OFF</span>
+             </div>
+          </div>
+
           {product.category && (
-            <div className="absolute top-2 left-2 bg-blue-600 text-white px-2.5 py-1 rounded-full text-xs font-semibold shadow-lg z-10">
+            <div className="absolute top-2 right-12 bg-blue-600 text-white px-2.5 py-1 rounded-full text-[10px] font-semibold shadow-lg z-10">
               {product.category}
             </div>
           )}

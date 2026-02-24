@@ -1,7 +1,9 @@
 "use client";
 import { useCartStore } from "@/lib/cart-store";
+import { calculateDiscountedPrice } from "@/lib/constants";
 import { trackEvent } from "@/lib/facebookPixel";
 import { parseDescription } from "@/lib/utils";
+import { Sparkles } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -37,6 +39,7 @@ export default function ProductDetailModal({
   const [selectedColor, setSelectedColor] = useState<string | undefined>(
     product.selectedColor || (product.color.length > 0 ? product.color[0] : undefined),
   );
+  const discountedPrice = calculateDiscountedPrice(product.price);
   const router = useRouter();
   const addItem = useCartStore((state) => state.addItem);
   const handleAddToCart = () => {
@@ -183,13 +186,22 @@ export default function ProductDetailModal({
                   {parseDescription(product.description).description}
                 </p>
 
-                <div className="flex items-baseline gap-3 mb-6">
-                  <span className="text-3xl font-black text-blue-600">
-                    ৳{product.price.toFixed(2)}
-                  </span>
-                  <span className={`text-xs font-bold px-2 py-1 rounded-md ${product.quantity > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                    {product.quantity > 0 ? 'IN STOCK' : 'OUT OF STOCK'}
-                  </span>
+                <div className="flex flex-col mb-6">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Sparkles className="w-4 h-4 text-amber-500 fill-amber-500" />
+                    <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Ramadan Special Offer</span>
+                  </div>
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-3xl font-black text-emerald-700">
+                      ৳{discountedPrice.toLocaleString()}
+                    </span>
+                    <span className="text-lg text-gray-400 line-through decoration-emerald-900/30">
+                      ৳{product.price.toLocaleString()}
+                    </span>
+                    <span className={`text-xs font-bold px-2 py-1 rounded-md ${product.quantity > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                      {product.quantity > 0 ? 'IN STOCK' : 'OUT OF STOCK'}
+                    </span>
+                  </div>
                 </div>
 
                 {product.hasVariants && (

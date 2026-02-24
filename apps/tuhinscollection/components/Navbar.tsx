@@ -44,9 +44,10 @@ export default function Navbar() {
   );
 
   const navLinks = [
-    { label: "Shop", href: "/#products" },
-    { label: "Categories", href: "/categories" },
-    { label: "Order Tracking", href: "/track-order" },
+    { label: "Home", href: "/" },
+    { label: "Best Collections", href: "/shop" },
+    { label: "My Profile", href: "/profile" },
+    { label: "View Cart", href: "/cart" },
   ];
 
   return (
