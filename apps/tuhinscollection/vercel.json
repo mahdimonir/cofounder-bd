@@ -2,6 +2,5 @@
   "framework": "nextjs",
   "buildCommand": "cd ../.. && pnpm turbo run build --filter=@cofounder/tuhinscollection",
   "installCommand": "pnpm install",
-  "devCommand": "next dev",
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./"
+  "devCommand": "next dev"
 }
