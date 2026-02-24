@@ -89,6 +89,11 @@ export async function POST(request: NextRequest) {
     });
 
     console.log(`Checkout Debug: User found/created: ${user.id}`);
+    console.log(`Checkout Debug: Items being processed:`, JSON.stringify(items.map((i: any) => ({
+      id: i.id,
+      originalId: i.originalId,
+      name: i.name
+    }))));
 
     // Verify brand exists
     const brand = await prisma.brand.findUnique({
@@ -98,24 +103,34 @@ export async function POST(request: NextRequest) {
     if (!brand) {
       console.error("Checkout Error: Brand 'stylehuntbd' not found in database");
       return NextResponse.json(
-        { error: "Configuration error: Brand not found. Please run seed." },
+        { error: "Configuration error: Brand not found. Please run seed script on production DB." },
         { status: 500 }
       );
     }
 
-    // Verify all products exist to prevent foreign key errors
+    // Verify all products exist and use the best possible ID
+    const validatedItems = [];
     for (const item of items) {
-      const pid = String(item.originalId || item.id);
+      // Priority: 1. originalId, 2. id (if it doesn't contain --), 3. parsed id from "id--color"
+      const rawId = String(item.originalId || item.id);
+      const pid = rawId.includes("--") ? rawId.split("--")[0] : rawId;
+
       const dbProduct = await prisma.product.findUnique({
         where: { id: pid }
       });
+
       if (!dbProduct) {
-        console.error(`Checkout Error: Product ID ${pid} not found in database for item ${item.name}`);
+        console.error(`Checkout Error: Product ID ${pid} (from ${rawId}) not found in database for item ${item.name}`);
         return NextResponse.json(
-          { error: `Product '${item.name}' (ID: ${pid}) is not available. Please clear your cart and add it again.` },
+          { error: `Product '${item.name}' is no longer available in the store database. Please clear your cart and add it again.` },
           { status: 400 }
         );
       }
+
+      validatedItems.push({
+        ...item,
+        databaseId: pid
+      });
     }
 
     const order = await prisma.order.create({
@@ -134,14 +149,14 @@ export async function POST(request: NextRequest) {
           customerPhone: formattedPhone,
         },
         items: {
-          create: items.map((item: any) => ({
-            productId: item.originalId || item.id,
+          create: validatedItems.map((item: any) => ({
+            productId: item.databaseId,
             quantity: item.quantity,
             price: item.price,
             selectedSize: item.selectedSize,
             selectedColor: item.selectedColor,
             imageUrl: item.imageUrl,
-            name: item.name, // Added name for better tracking
+            name: item.name,
           })),
         },
       },
@@ -152,10 +167,10 @@ export async function POST(request: NextRequest) {
 
     console.log(`Checkout Debug: Order created: ${order.id}`);
 
-    for (const item of items) {
+    for (const item of validatedItems) {
       try {
         await prisma.product.update({
-          where: { id: String(item.originalId || item.id) },
+          where: { id: item.databaseId },
           data: {
             quantity: {
               decrement: item.quantity,
@@ -163,8 +178,7 @@ export async function POST(request: NextRequest) {
           },
         });
       } catch (updateError) {
-        console.error(`Failed to update quantity for product ${item.id}:`, updateError);
-        // We continue even if update fails to not block the order
+        console.error(`Failed to update quantity for product ${item.databaseId}:`, updateError);
       }
     }
     if (user.email || email) {
