@@ -36,6 +36,34 @@ const Navbar: React.FC<NavbarProps> = ({
   className,
 }: NavbarProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [isVisible, setIsVisible] = React.useState(true);
+  const lastScrollY = React.useRef(0);
+
+  // Scroll to hide logic
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const scrollDelta = currentScrollY - lastScrollY.current;
+
+      // Always show at the very top
+      if (currentScrollY < 50) {
+        setIsVisible(true);
+      } 
+      // If scrolled down significantly (threshold of 10px)
+      else if (scrollDelta > 10) {
+        setIsVisible(false);
+      } 
+      // If scrolled up significantly (threshold of 10px)
+      else if (scrollDelta < -10) {
+        setIsVisible(true);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Prevent body scroll when menu is open
   React.useEffect(() => {
@@ -49,7 +77,8 @@ const Navbar: React.FC<NavbarProps> = ({
   return (
     <>
       <nav className={cn(
-        sticky ? "sticky top-0" : "fixed top-0 left-0 right-0",
+        sticky ? "fixed top-0 left-0 right-0 transition-transform duration-300" : "relative",
+        sticky && !isVisible && "-translate-y-full",
         "bg-white/80 backdrop-blur-md z-[9999] border-b border-gray-100/50",
         className
       )}>
@@ -94,10 +123,7 @@ const Navbar: React.FC<NavbarProps> = ({
           </div>
           
           <div className="flex items-center gap-4">
-            <div className={cn(
-              "items-center gap-4",
-              navLinks && navLinks.length > 0 ? "flex" : "hidden sm:flex"
-            )}>
+            <div className="flex items-center gap-4">
               {rightContent}
               {!rightContent && (
                 <a 
@@ -124,6 +150,9 @@ const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
       </nav>
+
+      {/* Spacer to prevent content overlap when navbar is fixed */}
+      {sticky && <div className="h-16" />}
 
       {/* Side Drawer Overlay */}
       <div 

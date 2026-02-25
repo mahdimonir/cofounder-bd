@@ -43,17 +43,9 @@ export default function Navbar() {
     </div>
   );
 
-  const navLinks = [
-    { label: "Home", href: "/" },
-    { label: "Shop All", href: "/shop" },
-    { label: "My Orders", href: "/profile?tab=orders" },
-    { label: "Ramadan Sale", href: "/shop" },
-  ];
-
   return (
     <SharedNavbar 
       logoComponent={<Logo variant="full" />}
-      navLinks={navLinks}
       rightContent={rightContent}
       sticky={true}
     />
