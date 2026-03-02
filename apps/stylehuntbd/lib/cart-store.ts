@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { calculateDiscountedPrice } from "./constants";
 interface CartItem {
   id: string;
   originalId: string;
@@ -81,8 +82,7 @@ export const useCartStore = create<CartStore>()(
       clearCart: () => set({ items: [] }),
       getTotal: () => {
         const total = get().items.reduce((acc, item) => {
-          // Apply 20% Ramadan Discount to all items
-          const discountedPrice = item.price * 0.8;
+          const discountedPrice = calculateDiscountedPrice(item.price);
           return acc + discountedPrice * item.quantity;
         }, 0);
         return total;

@@ -1,4 +1,4 @@
-export const RAMADAN_DISCOUNT = 0.2; // 20%
+export const RAMADAN_DISCOUNT = 0.30; // 30%
 
 export function calculateDiscountedPrice(price: number): number {
   return price * (1 - RAMADAN_DISCOUNT);

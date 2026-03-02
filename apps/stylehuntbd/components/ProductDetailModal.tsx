@@ -1,6 +1,6 @@
 "use client";
 import { useCartStore } from "@/lib/cart-store";
-import { calculateDiscountedPrice } from "@/lib/constants";
+import { calculateDiscountedPrice, RAMADAN_DISCOUNT } from "@/lib/constants";
 import { trackEvent } from "@/lib/facebookPixel";
 import { parseDescription } from "@/lib/utils";
 import { Sparkles } from "lucide-react";
@@ -189,7 +189,7 @@ export default function ProductDetailModal({
                 <div className="flex flex-col mb-6">
                   <div className="flex items-center gap-2 mb-1">
                     <Sparkles className="w-4 h-4 text-amber-500 fill-amber-500" />
-                    <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Ramadan Special Offer</span>
+                    <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Ramadan Special Offer ({RAMADAN_DISCOUNT * 100}% OFF)</span>
                   </div>
                   <div className="flex items-baseline gap-3">
                     <span className="text-3xl font-black text-emerald-700">

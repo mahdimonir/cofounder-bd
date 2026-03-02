@@ -14,39 +14,39 @@ const CATEGORIES = {
     names: ['Ash Gray', 'Charcoal', 'Coral Pink', 'Dark cyan', 'Dark red', 'Dusty Pruple', 'Golden Yellow', 'Light Brown', 'Light Cyan', 'Magenta', 'Paste pink', 'Paster Green', 'pink', 'Salmon Pink']
   },
   'Evani': {
-    price: 1800,
+    price: 1000,
     names: ['Black', 'Cool gray', 'Cyan', 'Dark Purple', 'Deep Red', 'Golden Brown', 'Golden Yellow', 'Jet Black', 'Maroon', 'pine Green', 'Raspberry Rose', 'Red Orange']
   },
   'Hejel': {
-    price: 1050,
+    price: 1200,
     names: ['Ash Graphite Grey', 'Blush Pink (2)', 'Blush Pink', 'Creamy White & Peach Floral', 'Deep Plum Purple', 'Ice Blue', 'Lavender Beige', 'Lilac Lavender', 'Mint Sage & Soft Coral', 'Mint Snow', 'Misty Grey Beige', 'Peach Rose', 'Peach Sherbet', 'Pink', 'Powder Blue & Rose Mist', 'Sage Green Pastel', 'Soft Beige & Pink Floral', 'Teal Green', 'Warm Taupe Mauve']
   },
   'Joipuri': {
-    price: 1200,
+    price: 1000,
     names: ['Black & White', 'Black', 'Burnt Umber', 'Crimson Coral & White', 'Dark Cayan', 'Dark pink', 'Dark yellow & White', 'Deep Teal & White', 'Gray & white', 'light pink', 'Olive Moss & White', 'Orange & White', 'Oxblood', 'Pink & White', 'Pink', 'White & Orange', 'White & Yellow', 'Yellow & White']
   },
   'Muslim': {
-    price: 1200,
+    price: 1800,
     names: ['Dark Burgundy', 'Dark Chocolate Brown', 'Dark Red-Recovered', 'Deep Red-Recovered', 'Dusty Orange-Recovered', 'Green-Recovered', 'light orange-Recovered', 'light pink', 'Pale Yellow']
   },
   'Pakija': {
-    price: 1200,
+    price: 1500,
     names: ['Amber Brown', 'black & Dark red', 'Black & Olive', 'Black & Red', 'Black', 'Burgundy', 'Cerise', 'coffe & orange', 'Dark Nevy', 'Midnight Blue', 'Mustard Yellow', 'Red Orange', 'Sage Green', 'Teal Blue']
   },
   'Starjhorjet': {
-    price: 2000,
+    price: 2500,
     names: ['Dark Teal', 'Deep Rose', 'Dusty Rose', 'Golden Brown']
   },
   'Zamzam loan': {
-    price: 1500,
+    price: 1200,
     names: ['Blue', 'burgundy red', 'charcoal black', 'Dark Brown', 'dark cherry', 'dark chocolate', 'dark moss', 'dark olive green', 'deep ocean teal', 'deep rose', 'Espresso Brown', 'Forest Green', 'indigo', 'Olive Green', 'Scarlet Red', 'sunset orange', 'Teal Gray', 'tomato red', 'Vintage Brown', 'wine berry']
   },
   'AC': {
-    price: 1050,
+    price: 1600,
     names: ["Cerise", "Coral Pink", "CoralPink", "Crimson", "Dark Maroon", "Dark Slate", "Deep Maroon", "Deep Navy", "Deep Red", "Deep Rose", "Deep Teal", "Deep Wine", "Golden Yellow", "Hot Pink", "Orchid", "Pine Green", "Ruby Red", "Slate Gray", "Sunflower Yellow", "Watermelon Pink"]
   },
   'AnyFashion': {
-    price: 1350,
+    price: 2000,
     names: ["Beige", "Burgundy Red", "Dark Maroon", "Dark Pink", "DarkPink", "Deep Blue", "Deep Cocoa", "Deep Sky Blue", "Deep SkyBlue", "Golden Yellow", "Golden", "Light Pink", "Sage Gray", "Soft Pink", "Teal Blue"]
   }
 };

@@ -1,5 +1,5 @@
 "use client";
-import { calculateDiscountedPrice } from "@/lib/constants";
+import { calculateDiscountedPrice, RAMADAN_DISCOUNT } from "@/lib/constants";
 import { parseDescription } from "@/lib/utils";
 import { Tag } from "lucide-react";
 import Image from "next/image";
@@ -8,7 +8,7 @@ import { useState } from "react";
 import ProductDetailModal from "./ProductDetailModal";
 import WishlistButton from "./wishlist/WishlistButton";
 interface Product {
-  id: string; // This is the virtual id: originalId--color
+  id: string;
   originalId: string;
   name: string;
   description: string;
@@ -26,7 +26,6 @@ export default function ProductCard({ product }: { product: Product }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const rating = 4.5;
   
-  // Link to the real product page with the color pre-selected
   const productLink = `/shop/${product.originalId}?color=${encodeURIComponent(product.selectedColor)}&variant=true`;
   const discountedPrice = calculateDiscountedPrice(product.price);
 
@@ -51,7 +50,7 @@ export default function ProductCard({ product }: { product: Product }) {
           <div className="absolute top-0 left-0 z-20 overflow-hidden rounded-br-xl">
              <div className="bg-amber-400 text-emerald-950 px-3 py-1 flex items-center gap-1.5 shadow-lg transform -skew-x-12 -ml-2">
                 <Tag className="w-3 h-3 fill-emerald-950/20" />
-                <span className="text-[10px] font-black uppercase tracking-tighter">20% OFF</span>
+                <span className="text-[10px] font-black uppercase tracking-tighter">{RAMADAN_DISCOUNT * 100}% OFF</span>
              </div>
           </div>
 
