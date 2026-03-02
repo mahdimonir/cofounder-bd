@@ -84,7 +84,7 @@ async function main() {
     const variantsData = data.names.map(name => ({
       color: name.replace('-Recovered', '').replace(' (2)', '').trim(),
       imageUrl: `/products/${categoryName}/${name}.png`,
-      quantity: 20
+      quantity: 2
     }));
 
     const totalQuantity = variantsData.reduce((sum, v) => sum + v.quantity, 0);
