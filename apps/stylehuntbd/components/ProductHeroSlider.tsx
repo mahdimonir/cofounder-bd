@@ -1,5 +1,5 @@
 "use client";
-import { calculateDiscountedPrice } from "@/lib/constants";
+import { calculateDiscountedPrice, RAMADAN_DISCOUNT } from "@/lib/constants";
 import { parseDescription } from "@/lib/utils";
 import { Moon, Sparkles } from "lucide-react";
 import Image from "next/image";
@@ -106,7 +106,7 @@ const ProductHeroSlider = ({ products }: ProductHeroSliderProps) => {
                       onClick={() => handleShopNow(product.id)}
                       className="w-full sm:w-auto px-12 py-5 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-black rounded-3xl hover:shadow-[0_20px_40px_-10px_rgba(37,99,235,0.4)] transition-all duration-500 hover:scale-105 active:scale-95 text-lg"
                     >
-                      Buy Now — 20% OFF
+                      Buy Now — {RAMADAN_DISCOUNT * 100}% OFF
                     </button>
                     <button
                       onClick={() => document.getElementById("products")?.scrollIntoView({ behavior: "smooth" })}
@@ -126,7 +126,7 @@ const ProductHeroSlider = ({ products }: ProductHeroSliderProps) => {
                         ৳{discountedPrice.toLocaleString()}
                       </span>
                       <div className="bg-amber-400 text-emerald-950 text-[10px] font-black px-2 py-1 rounded-lg shadow-sm">
-                        SAVE 20%
+                        SAVE {RAMADAN_DISCOUNT * 100}%
                       </div>
                     </div>
                   </div>
