@@ -40,6 +40,14 @@ const CATEGORIES = {
   'Zamzam loan': {
     price: 1500,
     names: ['Blue', 'burgundy red', 'charcoal black', 'Dark Brown', 'dark cherry', 'dark chocolate', 'dark moss', 'dark olive green', 'deep ocean teal', 'deep rose', 'Espresso Brown', 'Forest Green', 'indigo', 'Olive Green', 'Scarlet Red', 'sunset orange', 'Teal Gray', 'tomato red', 'Vintage Brown', 'wine berry']
+  },
+  'AC': {
+    price: 1050,
+    names: ["Cerise", "Coral Pink", "CoralPink", "Crimson", "Dark Maroon", "Dark Slate", "Deep Maroon", "Deep Navy", "Deep Red", "Deep Rose", "Deep Teal", "Deep Wine", "Golden Yellow", "Hot Pink", "Orchid", "Pine Green", "Ruby Red", "Slate Gray", "Sunflower Yellow", "Watermelon Pink"]
+  },
+  'AnyFashion': {
+    price: 1350,
+    names: ["Beige", "Burgundy Red", "Dark Maroon", "Dark Pink", "DarkPink", "Deep Blue", "Deep Cocoa", "Deep Sky Blue", "Deep SkyBlue", "Golden Yellow", "Golden", "Light Pink", "Sage Gray", "Soft Pink", "Teal Blue"]
   }
 };
 

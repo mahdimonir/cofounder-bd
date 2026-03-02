@@ -57,6 +57,8 @@ const getProductsByCategory = unstable_cache(
   { revalidate: 600, tags: ["products"] },
 );
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const [featuredProducts, categoriesWithProducts] = await Promise.all([
     getFeaturedProducts(),
