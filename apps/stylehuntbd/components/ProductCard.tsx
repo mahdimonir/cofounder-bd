@@ -109,9 +109,14 @@ export default function ProductCard({ product }: { product: Product }) {
           </div>
           {}
           <div className="flex items-center justify-between gap-2 pt-2 border-t border-gray-100">
-            <p className="text-lg sm:text-xl font-bold text-blue-600">
-              ৳{product.price.toFixed(2)}
-            </p>
+            <div className="flex flex-col">
+              <p className="text-lg sm:text-xl font-bold text-blue-600">
+                ৳{discountedPrice.toFixed(0)}
+              </p>
+              <p className="text-xs text-gray-400 line-through">
+                ৳{product.price.toFixed(0)}
+              </p>
+            </div>
             <button
               onClick={() => setIsModalOpen(true)}
               disabled={product.quantity === 0}
